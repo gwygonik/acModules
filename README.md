@@ -14,7 +14,7 @@ Alternatively, you can route a different CV input (**CV THRU**) to the outputs i
 ## Pick6
 8-step finger-pickin' trigger sequencer (1:6 patterned switch), with optional "Smart Riff" functionality.
 
-At its core, Pick6 is a simple trigger switch; with every trigger in (via **STEP**), a trigger out will be sent to one of six(6) output channels, via the polyphonic **POLY OUT** output. Which output channel is based on the current step in an 8-step sequence. Additionally, a single trigger output occurs with every non-empty step at **MONO OUT**. These are both in the **TRIG** section, bottom-right.
+At its core, Pick6 is a simple trigger switch; with every trigger in (via **STEP**), a trigger out will be sent to one of six(6) output channels, via the polyphonic **POLY OUT** output. Which output channel is based on the current step in an 8-step sequence. Additionally, a single-channel trigger output occurs with every non-empty step at **MONO OUT**. These are both in the **TRIG** section, bottom-right.
 
 The current pattern can be set via the **PATTERN** knob or it's connected CV input (0-10V). The pattern can be reset to the beginning using the **RESET** trigger input.
 
