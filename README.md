@@ -2,6 +2,8 @@
 
 A collection of modules for VCV Rack.
 
+![Screenshot of acModules in VCV Rack](/images/acModules.png)
+
 ## Ov3rCross
 A 3-band CV and Trigger "crossover".
 
