@@ -1,2 +1,2 @@
 # acModules
- artificialcolors VCV modules
+ VCV Modules in the artificialcolors brand
