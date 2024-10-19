@@ -9,7 +9,7 @@ A 3-band CV and Trigger "crossover".
 
 When given a CV input (**CV IN**) a Trigger on (**TRIG IN**) will route the CV and trigger to one of three outputs based on the **LOW** and **HIGH** CUTOFF knobs. The cutoff points and incoming CV range are from -5V to 10V to accomodate different use cases.
 
-Alternatively, you can route a different CV input (**CV THRU**) to the outputs based instead of the primary CV input; this can, for example, send an oscillator output to different effects based on the primary CV value.
+Alternatively, you can route a different CV input (**CV THRU**) to the outputs instead of the primary CV input; this can, for example, send an oscillator output to different effects based on the primary CV value.
 
 ## Pick6
 8-step finger-pickin' trigger sequencer (1:6 patterned switch), with optional "Smart Riff" functionality.
