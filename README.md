@@ -1,6 +1,6 @@
 # acModules
 
-A collection of modules for VCV Rack.
+A collection of modules for VCV Rack, with both Dark and Light panels.
 
 ![Screenshot of acModules in VCV Rack](/images/acModules.png)
 
