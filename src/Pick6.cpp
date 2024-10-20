@@ -36,7 +36,7 @@ struct Pick6 : Module {
 
 	int curStep, steps, lastSteps, filter_steps, seed;
 	int curPreset, basePreset, oldPreset;
-	static constexpr float numPresets = 47.f;
+	static constexpr float numPresets = 50.f;
 	int presets[(int)numPresets][8] = {
 		{ 0, 0, 0, 0, 0, 0, 0, 0 },
 		{ 1, 2, 3, 4, 5, 6, 0, 0 },
@@ -83,6 +83,9 @@ struct Pick6 : Module {
 		{ 2, 0, 5, 4, 2, 0, 4, 5 },
 		{ 2, 3, 5, 4, 2, 3, 6, 4 },
 		{ 2, 4, 2, 5, 2, 4, 2, 5 },
+		{ 5, 1, 6, 2, 5, 3, 6, 4 },
+		{ 5, 1, 3, 5, 6, 4, 2, 1 },
+		{ 1, 1, 2, 2, 0, 0, 5, 3 },
 		{ 0, 0, 0, 0, 0, 0, 0, 0 }, // user
 		{ 0, 0, 0, 0, 0, 0, 0, 0 }, // user
 	};

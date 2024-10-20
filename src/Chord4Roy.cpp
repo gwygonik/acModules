@@ -119,7 +119,7 @@ struct Chord4Roy : Module {
 			if (chordNoteOffsets[curNote-1][chordIndex][i] >= 0) {
 				// not muted
 				outputs[OUTPUT_POLYCV].setVoltage(baseOctave + ((baseOffsets[i] + chordNoteOffsets[curNote-1][chordIndex][i]) * voltPerNote),i);
-				outputs[OUTPUT_POLYCV].setVoltage(0.f,i+6);
+				outputs[OUTPUT_POLYCV].setVoltage(0.1f,i+6);
 			} else {
 				// muted
 				outputs[OUTPUT_POLYCV].setVoltage(baseOctave + (baseOffsets[i] * voltPerNote),i);
@@ -132,7 +132,9 @@ struct Chord4Roy : Module {
                 }
             }
 		}
-		outputs[OUTPUT_POLYCV].setChannels(12);
+		// add root note on channel 13
+		outputs[OUTPUT_POLYCV].setVoltage(baseOctave + ((curNote-1) * voltPerNote),12); // note 12 is 13 (0-based)
+		outputs[OUTPUT_POLYCV].setChannels(13);
 	}
 
 };
