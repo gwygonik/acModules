@@ -7,9 +7,13 @@ A collection of modules for VCV Rack, with both Dark and Light panels.
 ## Ov3rCross
 A 3-band CV and Trigger "crossover".
 
-When given a CV input (**CV IN**) a Trigger on (**TRIG IN**) will route the CV and trigger to one of three outputs based on the **LOW** and **HIGH** CUTOFF knobs. The cutoff points and incoming CV range are from -5V to 10V to accomodate different use cases.
+When given a control CV input (**CV IN**) a Trigger on (**TRIG IN**) will route the CV and trigger to one of three outputs based on the **LOW** and **HIGH** CUTOFF knobs. The cutoff points and incoming CV range are from -5V to 10V to accomodate different use cases.
 
 Alternatively, you can route a different CV input (**CV THRU**) to the outputs instead of the primary CV input; this can, for example, send an oscillator output to different effects based on the primary CV value.
+
+If the control CV is not connected (**CV IN**), the module will select a random voltage upon trigger input, and send that voltage (or CV thru voltage) and a trigger to the appropriate output. This could be considered a three-position random trigger with probability based on the low and high points. Neat!
+
+There are two options in the context menu: **Sample And Hold Control CV** will only output the voltage selected at the time of trigger input, instead of the voltage that is actively in that region (unless using CV thru); **Mute Non-Active Outputs To 0V** will very quickly ramp-down inactive CV outputs to 0V instead of leaving the last voltage in that region.
 
 ## Pick6
 8-step finger-pickin' trigger sequencer (1:6 patterned switch), with optional "Smart Riff" functionality.
