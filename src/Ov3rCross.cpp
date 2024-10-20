@@ -46,6 +46,7 @@ struct Ov3rCross : Module {
     dsp::PulseGenerator pulseOutputs[3];
     bool useSampleAndHold = false;
     bool muteToZero = false;
+    int randomCVRangeMode = 0;
 
 	Ov3rCross() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -95,6 +96,13 @@ struct Ov3rCross : Module {
         if (inTrigger.process(rack::math::rescale(inputs[INPUT_TRIGGER].getVoltage(), 0.1f, 2.f, 0.f, 1.f))) {
             if (!hasCVin) {
                 cvIN = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/15.f)) - 5.f; // -5 to 10
+                if (randomCVRangeMode == 1) {
+                    cvIN = rack::math::rescale(cvIN, -5.f, 10.f, -5.f, 5.f); // -5 to 5
+                } else if (randomCVRangeMode == 2) {
+                    cvIN = rack::math::rescale(cvIN, -5.f, 10.f, 0.f, 10.f); // 0 to 10
+                } else if (randomCVRangeMode == 3) {
+                    cvIN = rack::math::rescale(cvIN, -5.f, 10.f, 0.f, 5.f); // 0 to 5
+                }
                 setState();
             } else {
                 if (useSampleAndHold) {
@@ -233,6 +241,7 @@ struct Ov3rCrossWidget : ModuleWidget {
 		menu->addChild(createMenuLabel("Ov3rCross Preferences"));
 		menu->addChild(createBoolPtrMenuItem("Sample and Hold Control CV", "", &module->useSampleAndHold));
 		menu->addChild(createBoolPtrMenuItem("Mute Non-Active Outputs To 0V", "", &module->muteToZero));
+		menu->addChild(createIndexPtrSubmenuItem("Random CV Range", {"-5V to 10V", "-5V to 5V", "0V to 10V", "0V to 5V"}, &module->randomCVRangeMode));
 	}
 
 };
