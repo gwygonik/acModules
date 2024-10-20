@@ -36,9 +36,16 @@ struct Ov3rCross : Module {
     bool sendCVThru = false;
     float targetOut1, targetOut2, targetOut3;
     float currentOut1, currentOut2, currentOut3;
+    float outVoltage1, outVoltage2, outVoltage3;
+    bool hasCVin = false;
+    bool hasPickedRandomCV = false;
+    short curOut = 0;
+    float cvIN;
+    float rtCVIN;
     dsp::SchmittTrigger inTrigger;
     dsp::PulseGenerator pulseOutputs[3];
-    
+    bool useSampleAndHold = false;
+    bool muteToZero = false;
 
 	Ov3rCross() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -60,15 +67,71 @@ struct Ov3rCross : Module {
 	void process(const ProcessArgs& args) override {
         lowCut = params[PARAM_CUTOFF_LOW].getValue();
         highCut  = params[PARAM_CUTOFF_HIGH].getValue();
-        float cvIN   = rack::math::clamp(inputs[INPUT_CV].getVoltage(),-5.f,10.f);
-        cvVal = cvIN;
-        short curOut = 0;
+        if (inputs[INPUT_CV].isConnected()) {
+            cvIN = rack::math::clamp(inputs[INPUT_CV].getVoltage(),-5.f,10.f);
+            hasCVin = true;
+        } else {
+            hasCVin = false;
+        }
+        curOut = 0;
 
-        // UI blocks
+        // UI blockers
         getParamQuantity(PARAM_CUTOFF_HIGH)->minValue = lowCut+0.05f;
         getParamQuantity(PARAM_CUTOFF_LOW)->maxValue = highCut-0.05f;
 
+        if (hasCVin && !useSampleAndHold) {
+            // update here for visual updates while not running
+            setState();
+        }
+
+        if (inputs[INPUT_CVTHRU].isConnected()) {
+            sendCVThru = true;
+            cvThru = inputs[INPUT_CVTHRU].getVoltage();
+            setState();
+        } else {
+            sendCVThru = false;
+        }
+        
+        if (inTrigger.process(rack::math::rescale(inputs[INPUT_TRIGGER].getVoltage(), 0.1f, 2.f, 0.f, 1.f))) {
+            if (!hasCVin) {
+                cvIN = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/15.f)) - 5.f; // -5 to 10
+                setState();
+            } else {
+                if (useSampleAndHold) {
+                    setState();
+                }
+            }
+            pulseOutputs[0].reset();
+            pulseOutputs[1].reset();
+            pulseOutputs[2].reset();
+            pulseOutputs[curOut-1].trigger(1e-3f);
+        }
+
+
+        // for display - use whatever the current set CV is (input or random)
+        rtCVIN = cvIN;
+
+        if (muteToZero) {
+            currentOut3 += (targetOut3 - currentOut3) / 5.0f;
+            currentOut2 += (targetOut2 - currentOut2) / 5.0f;
+            currentOut1 += (targetOut1 - currentOut1) / 5.0f;
+            if (abs(currentOut3 - targetOut3) < 0.05f) currentOut3 = targetOut3;
+            if (abs(currentOut2 - targetOut2) < 0.05f) currentOut2 = targetOut2;
+            if (abs(currentOut1 - targetOut1) < 0.05f) currentOut1 = targetOut1;
+        }
+
+        outputs[OUTPUT_CV_HIGH].setVoltage(outVoltage1 * (muteToZero ? currentOut1 : 1.f));
+        outputs[OUTPUT_CV_MID].setVoltage(outVoltage2 * (muteToZero ? currentOut2 : 1.f));
+        outputs[OUTPUT_CV_LOW].setVoltage(outVoltage3 * (muteToZero ? currentOut3 : 1.f));
+        outputs[OUTPUT_TRIG_HIGH].setVoltage(pulseOutputs[0].process(args.sampleTime) ? 10.f : 0.f);
+        outputs[OUTPUT_TRIG_MID].setVoltage(pulseOutputs[1].process(args.sampleTime) ? 10.f : 0.f);
+        outputs[OUTPUT_TRIG_LOW].setVoltage(pulseOutputs[2].process(args.sampleTime) ? 10.f : 0.f);
+        
+	}
+
+    void setState() {
         if (cvIN <= lowCut) {
+            outVoltage3 = sendCVThru ? cvThru : cvIN;
             lights[LIGHT_LOW].setBrightness(1.f);
             lights[LIGHT_MID].setBrightness(0.f);
             lights[LIGHT_HIGH].setBrightness(0.f);
@@ -78,6 +141,7 @@ struct Ov3rCross : Module {
             curOut = 3;
         } else {
             if (cvIN > lowCut && cvIN < highCut) {
+                outVoltage2 = sendCVThru ? cvThru : cvIN;
                 lights[LIGHT_LOW].setBrightness(0.f);
                 lights[LIGHT_MID].setBrightness(1.f);
                 lights[LIGHT_HIGH].setBrightness(0.f);
@@ -87,6 +151,7 @@ struct Ov3rCross : Module {
                 curOut = 2;
             } else {
                 if (cvIN >= highCut) {
+                    outVoltage1 = sendCVThru ? cvThru : cvIN;
                     lights[LIGHT_LOW].setBrightness(0.f);
                     lights[LIGHT_MID].setBrightness(0.f);
                     lights[LIGHT_HIGH].setBrightness(1.f);
@@ -97,64 +162,33 @@ struct Ov3rCross : Module {
                 }
             }
         }
-        
-        if (inTrigger.process(rack::math::rescale(inputs[INPUT_TRIGGER].getVoltage(), 0.1f, 2.f, 0.f, 1.f))) {
-            pulseOutputs[0].reset();
-            pulseOutputs[1].reset();
-            pulseOutputs[2].reset();
-            pulseOutputs[curOut-1].trigger(1e-3f);
-        }
+        cvVal = cvIN;
+    }
 
-        if (inputs[INPUT_CVTHRU].isConnected()) {
-            sendCVThru = true;
-            cvThru = inputs[INPUT_CVTHRU].getVoltage();
-        } else {
-            sendCVThru = false;
-        }
+	json_t* dataToJson() override {
+		json_t* rootJ = json_object();
 
-        currentOut3 += (targetOut3 - currentOut3) / 5.0f;
-        currentOut2 += (targetOut2 - currentOut2) / 5.0f;
-        currentOut1 += (targetOut1 - currentOut1) / 5.0f;
-        if (abs(currentOut3 - targetOut3) < 0.05f) currentOut3 = targetOut3;
-        if (abs(currentOut2 - targetOut2) < 0.05f) currentOut2 = targetOut2;
-        if (abs(currentOut1 - targetOut1) < 0.05f) currentOut1 = targetOut1;
+		json_t* val = json_boolean(useSampleAndHold);
+		json_object_set_new(rootJ, "useSampleAndHold", val);
+		val = json_boolean(muteToZero);
+		json_object_set_new(rootJ, "muteToZero", val);
 
-        bool pulse = false;
-        float outVoltage = sendCVThru ? cvThru : cvIN;
-
-        switch (curOut) {
-            case 1:
-                outputs[OUTPUT_CV_HIGH].setVoltage(outVoltage * currentOut1);
-                outputs[OUTPUT_CV_MID].setVoltage(outVoltage * currentOut2);
-                outputs[OUTPUT_CV_LOW].setVoltage(outVoltage * currentOut3);
-                pulse = pulseOutputs[0].process(args.sampleTime);
-                outputs[OUTPUT_TRIG_HIGH].setVoltage(pulse ? 10.f : 0.f);
-                outputs[OUTPUT_TRIG_MID].setVoltage(0.f);
-                outputs[OUTPUT_TRIG_LOW].setVoltage(0.f);
-                break;
-            case 2:
-                outputs[OUTPUT_CV_HIGH].setVoltage(outVoltage * currentOut1);
-                outputs[OUTPUT_CV_MID].setVoltage(outVoltage * currentOut2);
-                outputs[OUTPUT_CV_LOW].setVoltage(outVoltage * currentOut3);
-                pulse = pulseOutputs[1].process(args.sampleTime);
-                outputs[OUTPUT_TRIG_HIGH].setVoltage(0.f);
-                outputs[OUTPUT_TRIG_MID].setVoltage(pulse ? 10.f : 0.f);
-                outputs[OUTPUT_TRIG_LOW].setVoltage(0.f);
-                break;
-            case 3:
-                outputs[OUTPUT_CV_HIGH].setVoltage(outVoltage * currentOut1);
-                outputs[OUTPUT_CV_MID].setVoltage(outVoltage * currentOut2);
-                outputs[OUTPUT_CV_LOW].setVoltage(outVoltage * currentOut3);
-                pulse = pulseOutputs[2].process(args.sampleTime);
-                outputs[OUTPUT_TRIG_HIGH].setVoltage(0.f);
-                outputs[OUTPUT_TRIG_MID].setVoltage(0.f);
-                outputs[OUTPUT_TRIG_LOW].setVoltage(pulse ? 10.f : 0.f);
-                break;
-            default:
-                break;
-        }
-        
+		return rootJ;
 	}
+
+	void dataFromJson(json_t* rootJ) override {
+		// sample and hold
+		json_t* val = json_object_get(rootJ, "useSampleAndHold");
+		if (val) {
+			useSampleAndHold = json_boolean_value(val);
+		}
+        // mute to zero
+		val = json_object_get(rootJ, "muteToZero");
+		if (val) {
+			muteToZero = json_boolean_value(val);
+		}
+	}
+
 };
 
 
@@ -192,6 +226,15 @@ struct Ov3rCrossWidget : ModuleWidget {
 		addChild(createLightCentered<MediumLight<WhiteLight>>(mm2px(Vec(46.246, 46.679)), module, Ov3rCross::LIGHT_MID));
 		addChild(createLightCentered<MediumLight<WhiteLight>>(mm2px(Vec(46.246, 80.811)), module, Ov3rCross::LIGHT_LOW));
 	}
+
+	void appendContextMenu(Menu* menu) override {
+		Ov3rCross* module = getModule<Ov3rCross>();
+		menu->addChild(new MenuSeparator);
+		menu->addChild(createMenuLabel("Ov3rCross Preferences"));
+		menu->addChild(createBoolPtrMenuItem("Sample and Hold Control CV", "", &module->useSampleAndHold));
+		menu->addChild(createBoolPtrMenuItem("Mute Non-Active Outputs To 0V", "", &module->muteToZero));
+	}
+
 };
 
 

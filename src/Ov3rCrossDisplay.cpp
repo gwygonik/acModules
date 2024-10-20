@@ -30,7 +30,7 @@ struct Ov3rCrossDisplay : rack::LedDisplay {
 			p.x = rack::mm2px(1.f);
 			p.y = rack::mm2px(102.f);
 			nvgBeginPath(args.vg);
-			nvgRoundedRect(args.vg, p.x, p.y, rack::mm2px(16.f), rack::mm2px(-1.f*rack::math::rescale(rack::math::clamp(module->cvVal,rangeLow,rangeHigh), rangeLow, rangeHigh, 1.f, 100.f)), 2.f);
+			nvgRoundedRect(args.vg, p.x, p.y, rack::mm2px(16.f), rack::mm2px(-1.f*rack::math::rescale(rack::math::clamp(module->rtCVIN,rangeLow,rangeHigh), rangeLow, rangeHigh, 1.f, 100.f)), 2.f);
 			nvgFill(args.vg);
 
 			// low cut

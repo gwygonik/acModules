@@ -227,18 +227,31 @@ struct Pick6 : Module {
 			delayBeforePlay = true;
 		}
 
-		if (inputs[POLYCV_INPUT].isConnected() && (inputs[POLYCV_INPUT].getChannels() >= 12)) {
-			for (int i=0;i<6;i++) {
-				noteValues[i] = inputs[POLYCV_INPUT].getPolyVoltage(i);
-				muteValues[i] = inputs[POLYCV_INPUT].getPolyVoltage(i+6) > 4.9f;
+		if (inputs[POLYCV_INPUT].isConnected()) {
+			if (inputs[POLYCV_INPUT].getChannels() >= 12) {
+				for (int i=0;i<6;i++) {
+					noteValues[i] = inputs[POLYCV_INPUT].getPolyVoltage(i);
+					muteValues[i] = inputs[POLYCV_INPUT].getPolyVoltage(i+6) > 4.9f;
+				}
+			} else if (inputs[POLYCV_INPUT].getChannels() < 6) {
+				// use what's there
+				int ch = inputs[POLYCV_INPUT].getChannels();
+				for (int i=0;i<ch;i++) {
+					noteValues[i] = inputs[POLYCV_INPUT].getPolyVoltage(i);
+					muteValues[i] = false;
+				}
+				for (int i=ch;i<6;i++) {
+					noteValues[i] = inputs[POLYCV_INPUT].getPolyVoltage(ch-1);
+					muteValues[i] = false;
+				}
             }
 			canOutputCV = true;
 		} else {
-			// if no CV input connected, use E chord just for fun
+			// if no CV input connected, use E chord because why not?
 			for (int i=0;i<6;i++) {
 				noteValues[i] = baseOctave + (baseOffsets[i] * voltPerNote);
 				muteValues[i] = false;
-            }
+			}
 			canOutputCV = true;
         }
 
