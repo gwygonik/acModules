@@ -36,7 +36,7 @@ There are two settings in the context menu: **"Muted Note CV to 0"** which will 
 
 Custom pattern programmer for **Pick6**. This should be attached directly to the right-side of **Pick6**; when attached, a LED will light on both modules near their names.
 
-This is simply 2x8 knobs that edit the last two patterns in **Pick6**.
+This is simply a 2x8 knob panel that edits the last two patterns in **Pick6**.
 
 ## Chord4Roy
 
