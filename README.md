@@ -55,5 +55,8 @@ You can choose between open-neck chords or bar chords (also called "barre") usin
 
 *NOTE: In this implementation, there are no bar chords for m6 or sus chords; they are substituted with open-neck chords.*
 
+# Changelog
 
+## 2.0.0
+- Initial release
 
