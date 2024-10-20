@@ -13,7 +13,10 @@ Alternatively, you can route a different CV input (**CV THRU**) to the outputs i
 
 If the control CV is not connected (**CV IN**), the module will select a random voltage upon trigger input, and send that voltage (or CV thru voltage) and a trigger to the appropriate output. This could be considered a three-position random trigger with probability based on the low and high points. Neat!
 
-There are three options in the context menu: **"Sample And Hold Control CV"** will only output the voltage selected at the time of trigger input, instead of the voltage that is actively in that region (unless using CV thru); **"Mute Non-Active Outputs To 0V"** will very quickly ramp-down inactive CV outputs to 0V instead of leaving the last voltage in that region; **"Random CV Range"** sets the range that the random control CV will be generated and output (if not using CV Thru) when no control CV is hooked up to the **CV IN** input.
+There are three options in the context menu: 
+- **"Sample And Hold Control CV"** will only output the voltage selected at the time of trigger input, instead of the voltage that is actively in that region (unless using CV thru)
+- **"Mute Non-Active Outputs To 0V"** will very quickly ramp-down inactive CV outputs to 0V instead of leaving the last voltage in that region
+- **"Random CV Range"** sets the range that the random control CV will be generated and output (if not using CV Thru) when no control CV is hooked up to the **CV IN** input.
 
 ## Pick6
 8-step finger-pickin' trigger sequencer (1:6 patterned switch), with optional "Smart Riff" functionality.
@@ -30,7 +33,9 @@ To make this module even more interesting, there is the **SMART RIFF** functiona
 
 At the end of the pattern selection are two custom pattern slots. These can be edited using the **Pick6p** extender (see below).
 
-There are two settings in the context menu: **"Muted Note CV to 0"** which will output 0V when a note is muted or not-picked instead of leaving it at the last step's voltage; **"Smart Riff in Blank Pattern"** which will allow the Smart Riff functionality to do its thing when on a blank pattern, which you may actually want to be blank.
+There are two settings in the context menu:
+- **"Muted Note CV to 0"** which will output 0V when a note is muted or not-picked instead of leaving it at the last step's voltage
+- **"Smart Riff in Blank Pattern"** which will allow the Smart Riff functionality to do its thing when on a blank pattern, which you may actually want to be blank.
 
 ## Pick6p
 
