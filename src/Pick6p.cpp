@@ -67,10 +67,13 @@ struct Pick6p : Module {
 				// turn on connected LED
 				lights[LIGHT_EXTENDED].setBrightness(0.95f);
 			} else {
-				// turn on connected LED
+				// turn off connected LED
 				lights[LIGHT_EXTENDED].setBrightness(0.f);
             }
-		}
+		} else {
+			// turn off connected LED
+			lights[LIGHT_EXTENDED].setBrightness(0.f);
+        }
 	}
 };
 

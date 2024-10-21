@@ -199,7 +199,10 @@ struct Pick6 : Module {
 				// turn off light
 				lights[EXTENDER_LIGHT].setBrightness(0.f);
             }
-		}
+		} else {
+			// turn off light
+			lights[EXTENDER_LIGHT].setBrightness(0.f);
+        }
 
 
 		if (riffTrigger.process(params[RIFF_PARAM].getValue() > 0.f)) {
