@@ -47,7 +47,10 @@ This is simply a 2x8 knob panel that edits the last two patterns in **Pick6**.
 
 Polyphonic guitar-style chord (with mutes) CV generator.
 
-**Chord4Roy** will generate six CV and six mutes on one polyphonic output (**POLY OUT CV**); channels 1-6 are note CV, while 7-12 are 0V/10V normal/muted voltages. 
+**Chord4Roy** will generate six CV and six mutes on one polyphonic output (**POLY OUT CV**):
+- channels 1-6 are note CV
+- channels 7-12 are 0V/10V normal/muted voltages
+- channel 13 is the root note CV, regardless if it might be muted in the chord
 
 You can set which note using the **ROOT NOTE** knob or CV input (0-10V), and select the chord using the **CHORD** knob or CV input (0-10V). Available chords are Root, Minor, 7th, Major 7th, Minor 7th, 6th, Minor 6th, and Sus.
 
