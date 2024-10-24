@@ -7,6 +7,8 @@ A collection of modules for VCV Rack, with both Dark and Light panels.
 ## Ov3rCross
 A 3-band CV and Trigger "crossover".
 
+[Ov3rCross Video](https://youtu.be/PI2qv28sgvA)
+
 When given a control CV input (**CV IN**) an incoming trigger (**TRIG IN**) will route the CV and trigger to one of three outputs based on the **LOW** and **HIGH** CUTOFF knobs. The cutoff points and incoming CV range are from -5V to 10V to accomodate different use cases.
 
 Alternatively, you can route a different CV input (**CV THRU**) to the outputs instead of the primary CV input; this can, for example, send an oscillator output to different effects based on the primary CV value.
