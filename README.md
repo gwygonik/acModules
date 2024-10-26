@@ -9,7 +9,7 @@ A 3-band CV and Trigger "crossover".
 
 [Ov3rCross Video](https://youtu.be/PI2qv28sgvA)
 
-When given a "control" CV input (**CV IN**), Ov3rCross will route the incoming CV to one of three output "zones" based on the where that CV is in relation to **LOW** and **HIGH** CUTOFF points. For example, if the incoming CV value falls above the LOW cutoff point and below the HIGH cutoff point, the CV will be routed to the MID output. The cutoff points and incoming CV range are from -5V to 10V to accomodate different use cases.
+When given a "control" CV input (**CV IN**), Ov3rCross will route this incoming CV to one of three output "zones" based on the where that CV is in relation to **LOW** and **HIGH** CUTOFF points. For example, if the incoming CV value falls above the LOW cutoff point and below the HIGH cutoff point, the CV will be routed to the MID output. The cutoff points and incoming CV range are from -5V to 10V to accomodate different use cases.
 
 You can use this control CV input (**CV IN**) to instead route the CV input at **CV THRU** to the outputs; this can, for example, send an oscillator output to different effects based on the control CV value.
 
@@ -17,10 +17,11 @@ When given an incoming trigger (**TRIG IN**) along with a CV input (**CV IN**), 
 
 If the trigger is connected but the control CV is *not* connected, Ov3rCross will generate a random voltage upon trigger input, and send that voltage (or CV thru voltage) and a trigger to the appropriate output. This could be considered a three-position random trigger with probability based on the low and high cutoff points. Neat!
 
-There are three options in the context menu: 
+There are four options in the context menu: 
 - **"Sample And Hold Control CV"** will only output the voltage selected at the time of trigger input, instead of the voltage that is actively in that region (unless using CV thru). This option requires a trigger input.
 - **"Mute Non-Active Outputs To 0V"** will very quickly ramp-down inactive CV outputs to 0V instead of leaving the last voltage in that region
 - **"Random CV Range"** sets the range that the random control CV will be generated and output (if not using CV Thru) when no control CV is hooked up to the **CV IN** input. Options are -5V to 10V; -5V to 5V; 0-5V; and 0-10V.
+- **"Output Trigger on CV Zone Change"** will output a trigger to a zone's trigger output when the incoming control CV enters that zone. This only functions when **not** using the Sample and Hold feature.
 
 ## Pick6
 8-step finger-pickin' trigger sequencer (1:6 patterned switch), with optional "Smart Riff" functionality.
@@ -62,7 +63,19 @@ You can choose between open-neck chords or bar chords (also called "barre") usin
 
 *NOTE: In this implementation, there are no bar chords for m6 or sus chords; they are substituted with open-neck chords.*
 
+## Rhythm1101
+
+16-step drum-oriented trigger sequencer (1:4 patterned switch), with preset grooves.
+
+More details coming shortly.
+
 # Changelog
+
+## 2.0.2
+- Addressed crash on Windows (and occassionally on Linux)
+- Ov3rCross: Added trigger out on zone change
+- Chord4Roy: Aligned visuals with other modules
+- Rhythm1101: Added new module!
 
 ## 2.0.0
 - Initial release
