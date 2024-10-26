@@ -68,9 +68,20 @@ You can choose between open-neck chords or bar chords (also called "barre") usin
 
 ## Rhythm1101
 
-16-step drum-oriented trigger sequencer (1:4 patterned switch), with preset grooves.
+16-step drum-oriented trigger sequencer, with preset grooves.
 
-More details coming shortly.
+Rhythm1101 is a basic sequencer that lets you create 16 4-channel patterns, and comes full of preset patterns based on classic drum tracks. Think of this as a quick way to add drum patterns to a larger song - just hook up the four **TRIG** outputs to drum modules, select a pattern, and send in a trigger to the **STEP** input. You can select which pattern plays using the **PATTERN** knob or connected CV input (0-10V) and set the length of the pattern between 1 and 16 steps using the **STEPS** knob.
+
+Every step of any pattern can be edited using the 16 knobs below the display area. These knobs' values range from 0 to 15; 0 means no track played on that step, 15 is all tracks play on that step. Values inbetween follow a binary pattern (hence "1101" of the module's name), representing the four tracks; 1 is the first track, 2 is the second track, 3 is the first _and_ second track, 4 is the third track, and so on. This is easier in-practice than reading about it 😄 
+
+As a bonus, there is the **MUTATE** feature that can be toggled on or off. This feature adds additional triggers to a track on rhythmically-appropriate steps using hand-coded weights and algorithms. The added triggers only persist for the playing of the current measure and do not alter the underlying pattern. You can set which tracks will be mutated using the knob in the **MUTATE** area, and the LEDs will light up to represent which tracks will be effected (these LEDs follow the same binary pattern as the step editing).
+
+There are five(5) options in the context menu:
+- **"Shift Pattern"** which lets you shift the current pattern to the right or left, one step at a time.
+- **"Mutation Frequency"** allows you to set how often a mutation occurs, every measure (1:1), or every second (1:2), third (1:3), or fourth measure (1:4).
+- **"Clear Current Pattern"** will clear the current pattern.
+- **"Clear All Patterns"** will clear all 16 patterns.
+- **"Reset To Factory Patterns"** will replace all the patterns with the preset grooves that come with the module.
 
 # Changelog
 
