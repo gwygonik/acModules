@@ -2,6 +2,9 @@
 
 A collection of modules for VCV Rack, with both Dark and Light panels.
 
+> [!IMPORTANT]
+> Reports of crashes on Windows and Linux have been partially reproduced, but an update has been submitted! Stay tuned!
+
 ![Screenshot of acModules in VCV Rack](/images/acModules.png)
 
 ## Ov3rCross
