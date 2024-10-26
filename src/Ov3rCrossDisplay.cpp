@@ -1,4 +1,5 @@
 #include <rack.hpp>
+#include "acModules.hpp"
 
 template <class TModule>
 struct Ov3rCrossDisplay : rack::LedDisplay {
@@ -51,7 +52,7 @@ struct Ov3rCrossDisplay : rack::LedDisplay {
 			nvgLineTo(args.vg, VEC_ARGS(p));
 			nvgStroke(args.vg);
 
-			std::shared_ptr<rack::Font> font = APP->window->loadFont(fontPath);
+			std::shared_ptr<rack::Font> font = APP->window->loadFont(rack::asset::plugin(pluginInstance, fontPath));
 			if (font) {
 				nvgFontSize(args.vg, 10);
 				nvgFontFaceId(args.vg, font->handle);

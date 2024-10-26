@@ -1,4 +1,6 @@
 #include <rack.hpp>
+#include "acModules.hpp"
+
 
 template <class TModule>
 struct Pick6Display : rack::LedDisplay {

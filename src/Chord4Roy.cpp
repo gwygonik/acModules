@@ -170,7 +170,7 @@ struct Chord4RoyWidget : ModuleWidget {
 		addParam(createParamCentered<CKSS>(mm2px(Vec(20.642, 68.257)), module, Chord4Roy::PARAM_MUTEOROPEN));
 
 		// outputs
-		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(15.240, 104.412)), module, Chord4Roy::OUTPUT_POLYCV));
+		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(15.240, 99.438)), module, Chord4Roy::OUTPUT_POLYCV));
 	}
 
 

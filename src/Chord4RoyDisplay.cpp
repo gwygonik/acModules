@@ -1,4 +1,5 @@
 #include <rack.hpp>
+#include "acModules.hpp"
 
 template <class TModule>
 struct Chord4RoyDisplay : rack::LedDisplay {
@@ -22,7 +23,7 @@ struct Chord4RoyDisplay : rack::LedDisplay {
 			nvgScissor(args.vg, RECT_ARGS(args.clipBox));
 			nvgBeginPath(args.vg);
 
-			std::shared_ptr<rack::Font> font = APP->window->loadFont(fontPath);
+			std::shared_ptr<rack::Font> font = APP->window->loadFont(rack::asset::plugin(pluginInstance, fontPath));
 			if (font) {
 				nvgFontSize(args.vg, 30);
 				nvgFontFaceId(args.vg, font->handle);

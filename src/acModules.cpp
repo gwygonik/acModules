@@ -10,4 +10,5 @@ void init(Plugin* p) {
 	p->addModel(modelPick6p);
 	p->addModel(modelOv3rCross);
 	p->addModel(modelChord4Roy);
+	p->addModel(modelRhythm1101);
 }

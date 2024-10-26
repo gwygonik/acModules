@@ -34,12 +34,14 @@ struct Ov3rCross : Module {
     float cvVal = 0.f;
     float cvThru = 0.f;
     bool sendCVThru = false;
+    bool triggered = false;
     float targetOut1, targetOut2, targetOut3;
     float currentOut1, currentOut2, currentOut3;
     float outVoltage1, outVoltage2, outVoltage3;
     bool hasCVin = false;
     bool hasPickedRandomCV = false;
     short curOut = 0;
+    short lastOut = 0;
     float cvIN;
     float rtCVIN;
     dsp::SchmittTrigger inTrigger;
@@ -47,6 +49,7 @@ struct Ov3rCross : Module {
     bool useSampleAndHold = false;
     bool muteToZero = false;
     int randomCVRangeMode = 0;
+    bool trigOnZoneChange = false;
 
 	Ov3rCross() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -92,10 +95,14 @@ struct Ov3rCross : Module {
         } else {
             sendCVThru = false;
         }
-        
-        if (inTrigger.process(rack::math::rescale(inputs[INPUT_TRIGGER].getVoltage(), 0.1f, 2.f, 0.f, 1.f))) {
+
+        triggered = inTrigger.process(rack::math::rescale(inputs[INPUT_TRIGGER].getVoltage(), 0.1f, 2.f, 0.f, 1.f));
+
+
+        // normal trigger mode
+        if (triggered) {
             if (!hasCVin) {
-                cvIN = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/15.f)) - 5.f; // -5 to 10
+                cvIN = rack::math::clamp((rand()) / ((RAND_MAX/15.f)) - 5.f, -5.f, 10.f); // -5 to 10
                 if (randomCVRangeMode == 1) {
                     cvIN = rack::math::rescale(cvIN, -5.f, 10.f, -5.f, 5.f); // -5 to 5
                 } else if (randomCVRangeMode == 2) {
@@ -115,7 +122,16 @@ struct Ov3rCross : Module {
             pulseOutputs[curOut-1].trigger(1e-3f);
         }
 
-
+        if (!useSampleAndHold && hasCVin && !triggered && trigOnZoneChange) {
+            // zone has changed - output a trigger on new zone
+            // NOTE: if we don't gate by all the if options, we get into a weird frozen state under certain conditions
+            if (curOut != lastOut) {
+                pulseOutputs[curOut-1].reset();
+                pulseOutputs[curOut-1].trigger(1e-3f);
+                lastOut = curOut;
+            }
+        }
+        
         // for display - use whatever the current set CV is (input or random)
         rtCVIN = cvIN;
 
@@ -180,6 +196,8 @@ struct Ov3rCross : Module {
 		json_object_set_new(rootJ, "useSampleAndHold", val);
 		val = json_boolean(muteToZero);
 		json_object_set_new(rootJ, "muteToZero", val);
+		val = json_boolean(trigOnZoneChange);
+		json_object_set_new(rootJ, "trigOnZoneChange", val);
 
 		return rootJ;
 	}
@@ -194,6 +212,11 @@ struct Ov3rCross : Module {
 		val = json_object_get(rootJ, "muteToZero");
 		if (val) {
 			muteToZero = json_boolean_value(val);
+		}
+        // output trigger on zone change
+		val = json_object_get(rootJ, "trigOnZoneChange");
+		if (val) {
+			trigOnZoneChange = json_boolean_value(val);
 		}
 	}
 
@@ -242,6 +265,7 @@ struct Ov3rCrossWidget : ModuleWidget {
 		menu->addChild(createBoolPtrMenuItem("Sample and Hold Control CV", "", &module->useSampleAndHold));
 		menu->addChild(createBoolPtrMenuItem("Mute Non-Active Outputs To 0V", "", &module->muteToZero));
 		menu->addChild(createIndexPtrSubmenuItem("Random CV Range", {"-5V to 10V", "-5V to 5V", "0V to 10V", "0V to 5V"}, &module->randomCVRangeMode));
+		menu->addChild(createBoolPtrMenuItem("Output Trigger on CV Zone Change", "", &module->trigOnZoneChange));
 	}
 
 };
