@@ -7,6 +7,7 @@ struct Chord4RoyDisplay : rack::LedDisplay {
 	rack::Vec displaySize;
 	const char* noteNameLabels[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 	const char* chordTypeLabels[8] = { "", "min", "7", "Maj7", "min7", "6", "min6", "Sus"};
+	const char* neckOption;
 
 	int curnote;
 	int curchord;
@@ -17,6 +18,7 @@ struct Chord4RoyDisplay : rack::LedDisplay {
 		if (layer == 1 && module) {
 			curnote = module->curNote - 1;
 			curchord = module->curChord-1;
+			neckOption = module->isUsingBar ? "BAR" : "OPEN";
 
 			rack::Vec p;
 			// Draw steps
@@ -41,7 +43,7 @@ struct Chord4RoyDisplay : rack::LedDisplay {
 				nvgFontFaceId(args.vg, font->handle);
 				nvgFillColor(args.vg, nvgRGB(0xc0,0xc0,0xc0));
 				nvgTextAlign(args.vg, NVG_ALIGN_LEFT);
-				nvgText(args.vg, rack::mm2px(13.f),rack::mm2px(displaySize.y-2.5f), module->isUsingBar ? "BAR" : "OPEN", NULL);
+				nvgText(args.vg, rack::mm2px(13.f),rack::mm2px(displaySize.y-2.5f), neckOption, NULL);
 			}
 
 		}
