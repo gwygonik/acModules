@@ -50,6 +50,12 @@ There are two settings in the context menu:
 Custom pattern programmer for **Pick6**. This should be attached directly to the right-side of **Pick6**; when attached, a LED will light on both modules near their names.
 
 This is simply a 2x8 knob panel that edits the last two patterns in **Pick6**.
+<!--
+
+There are several tools found in the context menu:
+- **"Copy..."** submenu lets you copy patterns from one side to the other, or from the current preset pattern in Pick6 to either side for customization.
+- **"Clear..."** submenu lets you clear either left or right patterns, or both patterns.
+-->
 
 ## Chord4Roy
 
@@ -84,6 +90,13 @@ There are five(5) options in the context menu:
 - **"Reset To Factory Patterns"** will replace all the patterns with the preset grooves that come with the module.
 
 # Changelog
+
+<!--
+## 2.0.3
+
+- Chord4Roy: Fixes last remaining crash on windows
+- Pick6p: context menu options for copying/clearing patterns
+-->
 
 ## 2.0.2
 - Addressed crash on Windows (and occassionally on Linux)
