@@ -174,23 +174,28 @@ struct Pick6 : Module {
 		if (rightExpander.module) {
 			if (rightExpander.module->model == modelPick6p) {
 				if (curPreset >= userPresetID) {
-					pick6pMessage *messageFromExpander = (pick6pMessage*)(rightExpander.module->leftExpander.consumerMessage);
+					pick6pMessage *messageFromExpander = (pick6pMessage*)(rightExpander.module->leftExpander.producerMessage);
 
 					for (int i=0;i<8;i++) {
 						presets[userPresetID][i] = messageFromExpander->stepValues[i];
 						presets[userPresetID+1][i] = messageFromExpander->stepValues[i+8];
 					}
-								
-					rightExpander.messageFlipRequested = true;
                 }
-				// set this regardless of in custom pattern so lights light correctly
-				pick6pMessage *messageToExpander = (pick6pMessage*)(rightExpander.module->leftExpander.producerMessage);
 
+				// set this regardless of in custom pattern so lights light correctly
+
+				pick6pMessage *messageToExpander = (pick6pMessage*)(rightExpander.module->leftExpander.consumerMessage);
 				if (curPreset >= userPresetID) {
 					messageToExpander->curCustomPattern = (curPreset == userPresetID ? 1 : 2);
                 } else {
 					messageToExpander->curCustomPattern = 0;
+					// set current pattern in P6p in case person wants to copy/edit
+					for (int i=0;i<8;i++) {
+						messageToExpander->stepValues[i] = presets[curPreset][i];
+						messageToExpander->stepValues[i+8] = 0.f;
+                    }
                 }
+
 				rightExpander.messageFlipRequested = true;
 
 				// turn on light
