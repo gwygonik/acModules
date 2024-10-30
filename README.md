@@ -1,6 +1,6 @@
 # acModules
 
-A collection of modules for VCV Rack, with both Dark and Light panels.
+A collection of useful modules for VCV Rack, with both Dark and Light panels.
 
 > [!IMPORTANT]
 > 2.0.2 DOES fix crashes on Windows and Linux on all modules *except* Chord4Roy. A solution has been found and a new release (2.0.3) will come later this week. Stay tuned!
@@ -28,6 +28,8 @@ There are four options in the context menu:
 
 ## Pick6
 8-step finger-pickin' trigger sequencer (1:6 patterned switch), with optional "Smart Riff" functionality.
+
+[Pick6 with Chord4Roy Video](https://youtu.be/Ij7Q0Ud_MjQ)
 
 At its core, Pick6 is a simple trigger switch; with every trigger in (via **PICK**), a trigger out will be sent to one of six(6) output channels, on the polyphonic **POLY OUT** output. Which output channel is based on the current step in an 8-step sequence. Additionally, a single-channel trigger output occurs with every non-empty step at **MONO OUT**. These are both in the **TRIG** section, bottom-right.
 
