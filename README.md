@@ -76,9 +76,11 @@ You can choose between open-neck chords or bar chords (also called "barre") usin
 
 ## Rhythm1101
 
-16-step drum-oriented trigger sequencer, with preset grooves.
+16-step drum-oriented trigger sequencer, with preprogrammed grooves and algorithmic variation feature.
 
-Rhythm1101 is a basic sequencer that lets you create 16 4-channel patterns, and comes full of preset patterns based on classic drum tracks. Think of this as a quick way to add drum patterns to a larger song - just hook up the four **TRIG** outputs to drum modules, select a pattern, and send in a trigger to the **STEP** input. You can select which pattern plays using the **PATTERN** knob or connected CV input (0-10V) and set the length of the pattern between 1 and 16 steps using the **STEPS** knob.
+[Rhythm1101 Video](https://youtu.be/TKvci508R3Y)
+
+Rhythm1101 (aka Rhythm13) is a basic sequencer that lets you create 16 4-channel patterns, and comes full of preset patterns based on classic drum tracks. Think of this as a quick way to add drum patterns to a larger song - just hook up the four **TRIG** outputs to drum modules, select a pattern, and send in a trigger to the **STEP** input. You can select which pattern plays using the **PATTERN** knob or connected CV input (0-10V) and set the length of the pattern between 1 and 16 steps using the **STEPS** knob.
 
 Every step of any pattern can be edited using the 16 knobs below the display area. These knobs' values range from 0 to 15; 0 means no track played on that step, 15 is all tracks play on that step. Values inbetween follow a binary pattern (hence "1101" of the module's name), representing the four tracks; 1 is the first track, 2 is the second track, 3 is the first _and_ second track, 4 is the third track, and so on. This is easier in-practice than reading about it 😄 
 
