@@ -93,6 +93,8 @@ There are five(5) options in the context menu:
 - **"Clear All Patterns"** will clear all 16 patterns.
 - **"Reset To Factory Patterns"** will replace all the patterns with the preset grooves that come with the module.
 
+____
+
 # Changelog
 
 <!--
