@@ -63,6 +63,8 @@ There are several tools found in the context menu:
 
 Polyphonic guitar-style chord (with mutes) CV generator.
 
+[![Pick6 with Chord4Roy Video](/images/vidChordPick.png)](http://www.youtube.com/watch?v=Ij7Q0Ud_MjQ)
+
 **Chord4Roy** will generate six CV and six mutes on one polyphonic output (**POLY OUT CV**):
 - channels 1-6 are note CV
 - channels 7-12 are 0V/10V normal/muted voltages
