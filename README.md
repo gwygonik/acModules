@@ -10,7 +10,7 @@ A collection of useful modules for VCV Rack, with both Dark and Light panels.
 ## Ov3rCross
 A 3-band CV and Trigger "crossover".
 
-[Ov3rCross Video](https://youtu.be/PI2qv28sgvA)
+[![Ov3rCross Video](/images/vidOv3r.png)](http://www.youtube.com/watch?v=PI2qv28sgvA)
 
 When given a "control" CV input (**CV IN**), Ov3rCross will route this incoming CV to one of three output "zones" based on the where that CV is in relation to **LOW** and **HIGH** CUTOFF points. For example, if the incoming CV value falls above the LOW cutoff point and below the HIGH cutoff point, the CV will be routed to the MID output. The cutoff points and incoming CV range are from -5V to 10V to accomodate different use cases.
 
@@ -29,7 +29,7 @@ There are four options in the context menu:
 ## Pick6
 8-step finger-pickin' trigger sequencer (1:6 patterned switch), with optional "Smart Riff" functionality.
 
-[Pick6 with Chord4Roy Video](https://youtu.be/Ij7Q0Ud_MjQ)
+[![Pick6 with Chord4Roy Video](/images/vidChordPick.png)](http://www.youtube.com/watch?v=Ij7Q0Ud_MjQ)
 
 At its core, Pick6 is a simple trigger switch; with every trigger in (via **PICK**), a trigger out will be sent to one of six(6) output channels, on the polyphonic **POLY OUT** output. Which output channel is based on the current step in an 8-step sequence. Additionally, a single-channel trigger output occurs with every non-empty step at **MONO OUT**. These are both in the **TRIG** section, bottom-right.
 
@@ -78,7 +78,7 @@ You can choose between open-neck chords or bar chords (also called "barre") usin
 
 16-step drum-oriented trigger sequencer, with preprogrammed grooves and algorithmic variation feature.
 
-[Rhythm1101 Video](https://youtu.be/TKvci508R3Y)
+[![Rhythm1101 Video](/images/vidR1101.png)](http://www.youtube.com/watch?v=TKvci508R3Y)
 
 Rhythm1101 (aka Rhythm13) is a basic sequencer that lets you create 16 4-channel patterns, and comes full of preset patterns based on classic drum tracks. Think of this as a quick way to add drum patterns to a larger song - just hook up the four **TRIG** outputs to drum modules, select a pattern, and send in a trigger to the **STEP** input. You can select which pattern plays using the **PATTERN** knob or connected CV input (0-10V) and set the length of the pattern between 1 and 16 steps using the **STEPS** knob.
 
