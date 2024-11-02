@@ -148,13 +148,13 @@ struct Merc8orWidget : ModuleWidget {
 		addChild(createWidget<ThemedScrew>(Vec(2, 0)));
 		addChild(createWidget<ThemedScrew>(Vec(box.size.x - 16, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(8.439, 82.054)), module, Merc8or::PARAM_HIGH_IN));
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(8.439, 92.856)), module, Merc8or::PARAM_LOW_IN));
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(22.041, 82.054)), module, Merc8or::PARAM_HIGH_OUT));
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(22.041, 92.856)), module, Merc8or::PARAM_LOW_OUT));
+		addParam(createParamCentered<Trimpot>(mm2px(Vec(8.439, 76.817)), module, Merc8or::PARAM_HIGH_IN));
+		addParam(createParamCentered<Trimpot>(mm2px(Vec(8.439, 92.163)), module, Merc8or::PARAM_LOW_IN));
+		addParam(createParamCentered<Trimpot>(mm2px(Vec(22.041, 76.817)), module, Merc8or::PARAM_HIGH_OUT));
+		addParam(createParamCentered<Trimpot>(mm2px(Vec(22.041, 92.163)), module, Merc8or::PARAM_LOW_OUT));
 
-		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(8.439, 109.414)), module, Merc8or::INPUT_CV));
-		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(22.041, 109.414)), module, Merc8or::OUTPUT_CV));
+		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(8.439, 109.370)), module, Merc8or::INPUT_CV));
+		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(22.041, 109.370)), module, Merc8or::OUTPUT_CV));
 	}
 
 	void appendContextMenu(Menu* menu) override {

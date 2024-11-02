@@ -177,6 +177,7 @@ struct Merc8orDisplay : rack::LedDisplay {
 				// high out
 				stepsStr = std::to_string(rangeHighOut);
 				stepsStr = stepsStr.substr(0, stepsStr.find(".")+3);
+				if (stepsStr == "-10.00") stepsStr = "-10.0";
 				nvgTextAlign(args.vg, NVG_ALIGN_RIGHT);
 				p.y = rack::mm2px(y4);
 				if (rangeHighOut > 8.5f) {
