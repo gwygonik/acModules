@@ -111,7 +111,7 @@ struct Chord4Roy : Module {
 
         if (inputs[INPUT_ROOTNOTE].isConnected()) {
 			if (useVOctNoteInput) {
-				float tmp;
+				double tmp;
 				curNote = static_cast<int>(clamp(floor(modf(inputs[INPUT_ROOTNOTE].getVoltage(),&tmp)/voltPerNote)+1.f,1.f,12.f));
             } else {
 				curNote = static_cast<int>(clamp(rescale(inputs[INPUT_ROOTNOTE].getVoltage(),0.f,10.f,1.f,12.f),1.f,12.f));
