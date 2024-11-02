@@ -29,6 +29,7 @@ struct Merc8or : Module {
 	int numChannels;
     float cvIN[16] = {};
 	float cvOUT[16] = {};
+	float curSampleRate = 0.f;
 
 	Merc8or() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -41,6 +42,8 @@ struct Merc8or : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
+		curSampleRate = args.sampleRate;
+
         inCVlow = params[PARAM_LOW_IN].getValue();
         inCVhigh  = params[PARAM_HIGH_IN].getValue();
         outCVlow = params[PARAM_LOW_OUT].getValue();

@@ -38,6 +38,7 @@ struct Chord4Roy : Module {
 	int oldChord = -1;
 	bool useVOctNoteInput = false;
 	bool usePianoManMode = false;
+	float curSampleRate = 0.f;
 
 	//         Root, min, 7, Maj7, min7, 6, min6*, Sus* (* = non-bar chords)
 	int chordNoteOffsets[12][16][6] = {
@@ -102,6 +103,7 @@ struct Chord4Roy : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
+		curSampleRate = args.sampleRate;
 
 		curNote = static_cast<int>(params[PARAM_ROOTNOTE].getValue());
 		curChord = static_cast<int>(params[PARAM_CHORD].getValue());

@@ -11,7 +11,6 @@ struct Rhythm1101Display : rack::LedDisplay {
 	short curpresetbase[16];
 	bool presetMutes[6];
 
-	const char* WhyDoesVCVCrashIfThisIsntHere[8] = { "1", "5", "9", "13","","","","" }; // it does...
 	const char* stepLabels[8] = { "1", "5", "9", "13", "", "", "", ""};
 
 	std::string fontPath = rack::asset::system("res/fonts/ShareTechMono-Regular.ttf");
@@ -20,6 +19,9 @@ struct Rhythm1101Display : rack::LedDisplay {
 	void drawLayer(const DrawArgs& args, int layer) override {
 
 		if (layer == 1 && module) {
+
+			if (module->curSampleRate == 0.f) return;
+
 			curstep = module->curStep;
 			curpattern = module->curPreset;
 

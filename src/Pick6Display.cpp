@@ -16,6 +16,8 @@ struct Pick6Display : rack::LedDisplay {
 	void drawLayer(const DrawArgs& args, int layer) override {
 
 		if (layer == 1 && module) {
+			if (module->curSampleRate == 0.f) return;
+
 			curstep = module->curStep;
 			curpattern = module->curPreset;
 			smartriffinblankpattern = module->smartRiffInBlankPattern;

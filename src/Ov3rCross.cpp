@@ -50,6 +50,7 @@ struct Ov3rCross : Module {
     bool muteToZero = false;
     int randomCVRangeMode = 0;
     bool trigOnZoneChange = false;
+    float curSampleRate = 0.f;
 
 	Ov3rCross() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -69,6 +70,8 @@ struct Ov3rCross : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
+		curSampleRate = args.sampleRate;
+
         lowCut = params[PARAM_CUTOFF_LOW].getValue();
         highCut  = params[PARAM_CUTOFF_HIGH].getValue();
         if (inputs[INPUT_CV].isConnected()) {

@@ -84,6 +84,7 @@ struct Rhythm1101 : Module {
 	int tempPattern[16];
 	bool isMutated = false;
 	bool canMutate[4];
+	float curSampleRate = 0.f;
 
 	dsp::SchmittTrigger inTrigger;
 	dsp::SchmittTrigger inReset;
@@ -122,6 +123,8 @@ struct Rhythm1101 : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
+
+		curSampleRate = args.sampleRate;
 
 
 		curPreset = params[PRESET_PARAM].getValue()-1;

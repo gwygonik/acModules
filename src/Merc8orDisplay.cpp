@@ -23,6 +23,8 @@ struct Merc8orDisplay : rack::LedDisplay {
 
 		if (layer == 1 && module) {
 
+			if (module->curSampleRate == 0.f) return;
+
 			rack::Vec p;
 
 			rangeLow = module->inCVlow;

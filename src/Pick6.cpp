@@ -119,7 +119,7 @@ struct Pick6 : Module {
 	// EADGBE
 	// 5,10,15,20,24,29 then -1
 	float baseOffsets[6] = {4,9,14,19,23,28};
-
+	float curSampleRate = 0.f;
 
 	dsp::SchmittTrigger inTrigger;
 	dsp::SchmittTrigger inReset;
@@ -156,6 +156,7 @@ struct Pick6 : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
+		curSampleRate = args.sampleRate;
 
 		int tmpPreset = params[PRESET_PARAM].getValue()-1;
 		if (playSelectedPattern) {

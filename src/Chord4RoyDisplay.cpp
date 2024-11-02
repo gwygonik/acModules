@@ -13,12 +13,19 @@ struct Chord4RoyDisplay : rack::LedDisplay {
 	int curchord;
 	std::string fontPath = rack::asset::system("res/fonts/ShareTechMono-Regular.ttf");
 
+
 	void drawLayer(const DrawArgs& args, int layer) override {
 
-		if (layer == 1 && module) {
+		if (layer != 1) return;
+
+		if (module) {
+			if (module->curSampleRate == 0.f) return;
+
 			curnote = module->curNote - 1;
-			curchord = module->curChord-1;
+			curchord = module->curChord - 1;
 			neckOption = module->isUsingBar ? "BAR" : "OPEN";
+
+			if ((curnote < 0) || (curchord < 0)) return;
 
 			rack::Vec p;
 			// Draw steps

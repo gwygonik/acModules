@@ -18,6 +18,8 @@ struct Ov3rCrossDisplay : rack::LedDisplay {
 
 		if (layer == 1 && module) {
 
+			if (module->curSampleRate == 0.f) return;
+
 			rack::Vec p;
 
 			nvgScissor(args.vg, RECT_ARGS(args.clipBox));
