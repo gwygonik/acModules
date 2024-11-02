@@ -107,15 +107,17 @@ There are five(5) options in the context menu:
 <!--
 ## Merc8or
 
-Quickly remap, scale, and/or invert one range of polyphonic CV values to another.
+Quickly remap, scale, limit, and/or invert one range of polyphonic CV values to another.
 
 *Video coming soon*
 
-At it's core, this module is just an CV attenuverter/scaler/offset. However, unlike other modules that do the same thing, this one doesn't require me to do math to scale one range into another range. For instance, if I want to use a LFO that goes from -5V to 5V to control volume of my mixer that takes 0-10V, but only have it go between 2.5V and 4V, that requires me to think much too hard about offsets and scale factors. With **Merc8or**, I can select the CV input (**IN**) range of 10V on the **HIGH** knob and 0V on the **LOW** knob; on the output side (**OUT**) I select 4V on the **HIGH** knob, and 2.5V on the **LOW** knob. Done!
+At it's core, this module is just an CV attenuverter/scaler/offset/limiter. However, unlike other modules that do the same thing, this one doesn't require you to do math to scale one range into another range or chain multiple modules. For instance, if I want to use a LFO that goes from -5V to 5V to control volume of my mixer that takes 0-10V, but only have it go between 2.5V and 4V, that requires me to think much too hard about offsets and scale factors. With **Merc8or**, I can select the CV input (**IN**) range of 10V on the **HIGH** knob and 0V on the **LOW** knob; on the output side (**OUT**) I select 4V on the **HIGH** knob, and 2.5V on the **LOW** knob. Done! If the incoming values go outside of the in range, they automatically get limited.
 
 As mentioned, this is a polyphonic module, so you can convert up to 16 channels of CV from one range to another range, with all channels being converted through the same settings.
 
 It can also invert the output range if you want, either by selecting **"Invert Output"** in the context menu, or put the **HIGH** output value lower than the **LOW** output value. In the above example, if I put the **HIGH** output knob at 2.5V and the **LOW** output knob at 4V, I'd have the same output range, but inverted!
+
+All of these features let you use a single modulation source for multiple purposes easily and quickly. And without thinking about math. 😃
 
 There are two more context menu options:
 - **"Quick Set Input Range..."** provides several common options for input ranges.
