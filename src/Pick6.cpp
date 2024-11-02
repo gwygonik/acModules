@@ -101,7 +101,7 @@ struct Pick6 : Module {
 	int curTrig = 0;
 	float inCV = 0.f;
 	bool canOutputCV = false;
-	bool isFirstPass = true;
+	bool playSelectedPattern = true;
 	int delayCounter = 0;
 	bool delayBeforePlay = true;
 	bool muteToZero = false;
@@ -113,6 +113,7 @@ struct Pick6 : Module {
 	int smartRiffLastIndex = 0;
 	bool isPlayingSmartRiffNote = false;
 	bool smartRiffInBlankPattern = false;
+	bool useOffsetEOP = false;
 	float voltPerNote = 0.08333f;
 	float baseOctave = 0.0f;
 	// EADGBE
@@ -157,7 +158,7 @@ struct Pick6 : Module {
 	void process(const ProcessArgs& args) override {
 
 		int tmpPreset = params[PRESET_PARAM].getValue()-1;
-		if (isFirstPass) {
+		if (playSelectedPattern) {
 			curPreset = params[PRESET_PARAM].getValue()-1;
 			basePreset = curPreset;
         } else {
@@ -166,7 +167,7 @@ struct Pick6 : Module {
 				curPreset = basePreset = tmpPreset;
             }
         }
-		if (inputs[PRESET_INPUT].isConnected() && isFirstPass) {
+		if (inputs[PRESET_INPUT].isConnected() && playSelectedPattern) {
 			curPreset = clamp(rescale(inputs[PRESET_INPUT].getVoltage(),0.f,10.f,1.f,numPresets),1.f,numPresets)-1;
 			params[PRESET_PARAM].setValue(curPreset+1);
 		}
@@ -220,13 +221,16 @@ struct Pick6 : Module {
 		if (inReset.process(inputs[RESET_INPUT].getVoltage(), 0.01f, 2.f)) {
 			curStep = -1;
 			curTrig = 0;
-			if (!isFirstPass) curPreset = basePreset;
+			if (!playSelectedPattern) curPreset = basePreset;
 			delayCounter = 0;
 			delayBeforePlay = true;
 			smartRiffRepeatCount = 0;
 			oldPreset = -1;
 			measureCount = 1;
-			isFirstPass = true;
+			playSelectedPattern = true;
+			if (useOffsetEOP) {
+				setNextPattern();
+            }
 		}
 
 		if (inTrigger.process(inputs[TRIGGER_INPUT].getVoltage(), 0.01f, 2.f)) {
@@ -295,28 +299,12 @@ struct Pick6 : Module {
 					curStep = 0;
 					measureCount++;
 					if (measureCount > 32) measureCount = 1;
-					if (isFirstPass) {
-						if (params[EOP_PARAM].getValue() == 1.0f) {
-							// next then back
-							basePreset = curPreset;
-							curPreset++;
-							if (curPreset > numPresets-1) {
-								curPreset = 1;
-							}
-							isFirstPass = false;
-						} else if (params[EOP_PARAM].getValue() == 0.0f) {
-							// silent bar
-							basePreset = curPreset;
-							curPreset = 0;
-							isFirstPass = false;
-						} else {
-							// just do the same loop
-							isFirstPass = true;
-                        }
+					if (playSelectedPattern) {
+						setNextPattern();
 					} else {
 						// not first pass
 						curPreset = basePreset;
-						isFirstPass = true;
+						playSelectedPattern = true;
 					}
 
 				}
@@ -423,6 +411,26 @@ struct Pick6 : Module {
 		lights[RIFF_LIGHT].setBrightness(useSmartRiff ? 0.95f : 0.f);
 	}
 
+	void setNextPattern() {
+		if (params[EOP_PARAM].getValue() == 1.0f) {
+			// next then back
+			basePreset = curPreset;
+			curPreset++;
+			if (curPreset > numPresets-1) {
+				curPreset = 1;
+			}
+			playSelectedPattern = false;
+		} else if (params[EOP_PARAM].getValue() == 0.0f) {
+			// silent bar
+			basePreset = curPreset;
+			curPreset = 0;
+			playSelectedPattern = false;
+		} else {
+			// just do the same loop
+			playSelectedPattern = true;
+        }
+    }
+
 	json_t* dataToJson() override {
 		json_t* rootJ = json_object();
 
@@ -432,6 +440,8 @@ struct Pick6 : Module {
 		json_object_set_new(rootJ, "muteToZero", val);
 		val = json_boolean(smartRiffInBlankPattern);
 		json_object_set_new(rootJ, "smartRiffInBlankPattern", val);
+		val = json_boolean(useOffsetEOP);
+		json_object_set_new(rootJ, "useOffsetEOP", val);
 
 		return rootJ;
 	}
@@ -446,6 +456,11 @@ struct Pick6 : Module {
 		val = json_object_get(rootJ, "smartRiffInBlankPattern");
 		if (val) {
 			smartRiffInBlankPattern = json_boolean_value(val);
+		}
+		// offset EOP
+		val = json_object_get(rootJ, "useOffsetEOP");
+		if (val) {
+			useOffsetEOP = json_boolean_value(val);
 		}
 	}
 };
@@ -507,6 +522,7 @@ struct Pick6Widget : ModuleWidget {
 		menu->addChild(createMenuLabel("Pick6 Preferences"));
 		menu->addChild(createBoolPtrMenuItem("Muted Note CV to 0V", "", &module->muteToZero));
 		menu->addChild(createBoolPtrMenuItem("Smart Riff in Blank Pattern", "", &module->smartRiffInBlankPattern));
+		menu->addChild(createBoolPtrMenuItem("Offset End Of Pattern", "", &module->useOffsetEOP));
 	}
 
 };

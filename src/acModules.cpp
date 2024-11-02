@@ -11,4 +11,6 @@ void init(Plugin* p) {
 	p->addModel(modelOv3rCross);
 	p->addModel(modelChord4Roy);
 	p->addModel(modelRhythm1101);
+	p->addModel(modelMerc8or);
+	p->addModel(modelPul5es);
 }

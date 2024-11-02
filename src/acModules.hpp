@@ -10,3 +10,5 @@ extern Model* modelPick6p;
 extern Model* modelOv3rCross;
 extern Model* modelChord4Roy;
 extern Model* modelRhythm1101;
+extern Model* modelMerc8or;
+extern Model* modelPul5es;

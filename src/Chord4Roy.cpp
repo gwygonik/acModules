@@ -36,6 +36,8 @@ struct Chord4Roy : Module {
 	int curChord = 0;
 	int oldNote = -1;
 	int oldChord = -1;
+	bool useVOctNoteInput = false;
+	bool usePianoManMode = false;
 
 	//         Root, min, 7, Maj7, min7, 6, min6*, Sus* (* = non-bar chords)
 	int chordNoteOffsets[12][16][6] = {
@@ -77,6 +79,12 @@ struct Chord4Roy : Module {
 		 { 7,9,9,8,7,7 }, { 7,9,9,7,7,7}, {7,9,7,8,7,7}, {7,9,8,8,7,7}, {7,9,7,7,7,7}, {7,9,7,8,9,7}, {-1,-1,4,4,3,4}, {-1,-1,4,4,5,2} },
 	};
 
+	//         Root, min, 7, Maj7, min7, 6, min6, Sus 
+	int pianoNoteOffsets[8][6] = {
+		// all chords are based on root
+		{ -11,1,5,8,13,17 }, { -11,1,4,8,13,16}, { -11,1,5,8,11,13 }, { -11,1,5,8,12,13 }, { -11,1,4,8,11,13 }, { -11,1,5,8,10,13 }, { -11,1,4,8,10,13 }, { -11,1,3,8,13,15 }
+	};
+
 	Chord4Roy() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, 0);
 		configParam(PARAM_ROOTNOTE, 1.f, 12.f, 1.f, "Root Note");
@@ -102,7 +110,12 @@ struct Chord4Roy : Module {
 		isUsingMutes=params[PARAM_MUTEOROPEN].getValue() < 0.5f ? false : true;
 
         if (inputs[INPUT_ROOTNOTE].isConnected()) {
-			curNote = static_cast<int>(clamp(rescale(inputs[INPUT_ROOTNOTE].getVoltage(),0.f,10.f,1.f,12.f),1.f,12.f));
+			if (useVOctNoteInput) {
+				float tmp;
+				curNote = static_cast<int>(clamp(floor(modf(inputs[INPUT_ROOTNOTE].getVoltage(),&tmp)/voltPerNote)+1.f,1.f,12.f));
+            } else {
+				curNote = static_cast<int>(clamp(rescale(inputs[INPUT_ROOTNOTE].getVoltage(),0.f,10.f,1.f,12.f),1.f,12.f));
+            }
 		}
         if (inputs[INPUT_CHORD].isConnected()) {
 			curChord = static_cast<int>(clamp(rescale(inputs[INPUT_CHORD].getVoltage(),0.f,10.f,1.f,8.f),1.f,8.f));
@@ -112,29 +125,75 @@ struct Chord4Roy : Module {
 			params[PARAM_USEBAR].setValue(isUsingBar ? 0.0f : 1.0f);
 		}
 
-		int chordIndex = (curChord-1) + (isUsingBar ? 8 : 0);
+		int chordIndex = (curChord-1) + ((isUsingBar && !usePianoManMode) ? 8 : 0);
 
 		// set current chord notes
-		for (int i=0;i<6;i++) {
-			if (chordNoteOffsets[curNote-1][chordIndex][i] >= 0) {
-				// not muted
-				outputs[OUTPUT_POLYCV].setVoltage(baseOctave + ((baseOffsets[i] + chordNoteOffsets[curNote-1][chordIndex][i]) * voltPerNote),i);
-				outputs[OUTPUT_POLYCV].setVoltage(0.1f,i+6);
-			} else {
-				// muted
-				outputs[OUTPUT_POLYCV].setVoltage(baseOctave + (baseOffsets[i] * voltPerNote),i);
-				if (isUsingMutes) {
-					// mute the string
-					outputs[OUTPUT_POLYCV].setVoltage(10.f,i+6);
-                } else {
-					// open string note
+		if (!usePianoManMode) {
+			// guitar-style chords
+			for (int i=0;i<6;i++) {
+				if (chordNoteOffsets[curNote-1][chordIndex][i] >= 0) {
+					// not muted
+					outputs[OUTPUT_POLYCV].setVoltage(baseOctave + ((baseOffsets[i] + chordNoteOffsets[curNote-1][chordIndex][i]) * voltPerNote),i);
 					outputs[OUTPUT_POLYCV].setVoltage(0.f,i+6);
-                }
-            }
+				} else {
+					// muted
+					outputs[OUTPUT_POLYCV].setVoltage(baseOctave + (baseOffsets[i] * voltPerNote),i);
+					if (isUsingMutes) {
+						// mute the string
+						outputs[OUTPUT_POLYCV].setVoltage(10.f,i+6);
+					} else {
+						// open string note
+						outputs[OUTPUT_POLYCV].setVoltage(0.f,i+6);
+					}
+				}
+			}
+			// add root note on channel 13
+			outputs[OUTPUT_POLYCV].setVoltage(baseOctave + ((curNote-1) * voltPerNote), 12); // channel 12 is 13 (0-based)
+			outputs[OUTPUT_POLYCV].setChannels(13);
+        } else {
+			// piano-style chords
+			for (int i=0;i<6;i++) {
+				if ((pianoNoteOffsets[chordIndex][i] >= 0) && (pianoNoteOffsets[chordIndex][i] < 13) ) {
+					// core chord
+					outputs[OUTPUT_POLYCV].setVoltage(baseOctave + (((curNote-1)+(pianoNoteOffsets[chordIndex][i]-1)) * voltPerNote),i);
+					outputs[OUTPUT_POLYCV].setVoltage(0.f,i+6);
+				} else {
+					// extras
+					outputs[OUTPUT_POLYCV].setVoltage(baseOctave + (((curNote-1)+(pianoNoteOffsets[chordIndex][i]-1)) * voltPerNote),i);
+					if (isUsingMutes) {
+						// mute the note
+						outputs[OUTPUT_POLYCV].setVoltage(10.f,i+6);
+					} else {
+						// don't mute note
+						outputs[OUTPUT_POLYCV].setVoltage(0.f,i+6);
+					}
+				}
+			}
+			// add root note on channel 13
+			outputs[OUTPUT_POLYCV].setVoltage(baseOctave + ((curNote-1) * voltPerNote), 12); // channel 12 is 13 (0-based)
+			outputs[OUTPUT_POLYCV].setChannels(13);
+        }
+	}
+
+	json_t* dataToJson() override {
+		json_t* rootJ = json_object();
+		json_t* val = json_boolean(useVOctNoteInput);
+		json_object_set_new(rootJ, "useVOctNoteInput", val);
+		val = json_boolean(usePianoManMode);
+		json_object_set_new(rootJ, "usePianoManMode", val);
+		return rootJ;
+	}
+
+	void dataFromJson(json_t* rootJ) override {
+		// use V/Oct for root note
+		json_t* val = json_object_get(rootJ, "useVOctNoteInput");
+		if (val) {
+			useVOctNoteInput = json_boolean_value(val);
 		}
-		// add root note on channel 13
-		outputs[OUTPUT_POLYCV].setVoltage(baseOctave + ((curNote-1) * voltPerNote),12); // note 12 is 13 (0-based)
-		outputs[OUTPUT_POLYCV].setChannels(13);
+		val = json_object_get(rootJ, "usePianoManMode");
+		if (val) {
+			usePianoManMode = json_boolean_value(val);
+		}
 	}
 
 };
@@ -173,6 +232,13 @@ struct Chord4RoyWidget : ModuleWidget {
 		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(15.240, 99.438)), module, Chord4Roy::OUTPUT_POLYCV));
 	}
 
+	void appendContextMenu(Menu* menu) override {
+		Chord4Roy* module = getModule<Chord4Roy>();
+		menu->addChild(new MenuSeparator);
+		menu->addChild(createMenuLabel("Chord4Roy Preferences"));
+		menu->addChild(createBoolPtrMenuItem("Use V/Oct Root Note Selection", "", &module->useVOctNoteInput));
+		menu->addChild(createBoolPtrMenuItem("PianoMan Mode", "", &module->usePianoManMode));
+	}
 
 };
 
