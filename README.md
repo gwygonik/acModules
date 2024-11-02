@@ -95,11 +95,48 @@ There are five(5) options in the context menu:
 - **"Clear All Patterns"** will clear all 16 patterns.
 - **"Reset To Factory Patterns"** will replace all the patterns with the preset grooves that come with the module.
 
+## Merc8or
+
+Quickly remap, scale, and/or invert one range of polyphonic CV values to another.
+
+*Video coming soon*
+
+At it's core, this module is just an CV attenuverter/scaler/offset. However, unlike other modules that do the same thing, this one doesn't require me to do math to scale one range into another range. For instance, if I want to use a LFO that goes from -5V to 5V to control volume of my mixer that takes 0-10V, but only have it go between 2.5V and 4V, that requires me to think much too hard about offsets and scale factors. With **Merc8or**, I can select the CV input (**IN**) range of 10V on the **HIGH** knob and 0V on the **LOW** knob; on the output side (**OUT**) I select 4V on the **HIGH** knob, and 2.5V on the **LOW** knob. Done!
+
+As mentioned, this is a polyphonic module, so you can convert up to 16 channels of CV from one range to another range, with all channels being converted through the same settings.
+
+It can also invert the output range if you want, either by selecting **"Invert Output"** in the context menu, or put the **HIGH** output value lower than the **LOW** output value. In the above example, if I put the **HIGH** output knob at 2.5V and the **LOW** output knob at 4V, I'd have the same output range, but inverted!
+
+There are two more context menu options:
+**"Quick Set Input Range..."** provides several common options for input ranges.
+**"Quick Set Output Range..."** provides several commong output ranges as well as some targetted at notes/octave ranges.
+
+## Pul5es
+
+Outputs a trigger pulse upon receiving a specified number of incoming pulses.
+
+*Video coming soon*
+
+This is a very simple module - send in a series of triggers to the **STEP** input, and after a number of triggers the **OUT ON** knob is set to is received, Pul5es will send a trigger to **OUT**. As an example, if I want to send a trigger to my mixer to mute a channel *after* 16 beats, I set the **OUT ON** knob to 17, and send in beat triggers from my clock source; after 16 beats, on the 17th trigger in, Pul5es sends a trigger out and my mixer channel gets muted.
+
+There is a button, **LOOP**, which will start counting again after sending a trigger. This enables you to repeatedly send a trigger every N-number of trigger **STEPS** in.
+
+There is also a **RESET** input which can be used to reset the count at any time. Typically I connect this to the "reset" AND "run" outputs on my clock source.
+
+There is one context menu option:
+**"Invert Pulse Logic"** will send a trigger out on every **STEP** in *EXCEPT* for the **OUT ON** count number.
+
 ____
 
 # Changelog
 
 <!--
+## 2.0.4
+
+- Merc8or: Added new module!
+- Pul5es: Another new module!
+- All modules: Modules would _sometimes_ crash when trying to add to VCV when no audio interface or output was selected. Should be resolved. 🤞
+
 ## 2.0.3
 
 - Chord4Roy: Fixes last remaining crash on windows
