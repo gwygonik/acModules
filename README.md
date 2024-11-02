@@ -95,6 +95,7 @@ There are five(5) options in the context menu:
 - **"Clear All Patterns"** will clear all 16 patterns.
 - **"Reset To Factory Patterns"** will replace all the patterns with the preset grooves that come with the module.
 
+<!--
 ## Merc8or
 
 Quickly remap, scale, and/or invert one range of polyphonic CV values to another.
@@ -125,7 +126,7 @@ There is also a **RESET** input which can be used to reset the count at any time
 
 There is one context menu option:
 **"Invert Pulse Logic"** will send a trigger out on every **STEP** in *EXCEPT* for the **OUT ON** count number.
-
+-->
 ____
 
 # Changelog
