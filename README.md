@@ -46,6 +46,9 @@ At the end of the pattern selection are two custom pattern slots. These can be e
 There are two settings in the context menu:
 - **"Muted Note CV to 0"** which will output 0V when a note is muted or not-picked instead of leaving it at the last step's voltage
 - **"Smart Riff in Blank Pattern"** which will allow the Smart Riff functionality to do its thing when on a blank pattern, which you may actually want to be blank.
+<!--
+- **"Offset End of Pattern"** will reverse the sequence of the **EOP** setting, meaning that if you have that set to go to a blank pattern after the current pattern, Pick6 will start with the blank pattern and then go to the current pattern, and repeat from there. This allows a "dueling banjos" scenario, where two Pick6 modules take turns playing their pattern.
+-->
 
 ## Pick6p
 
@@ -75,6 +78,12 @@ You can set which note using the **ROOT NOTE** knob or CV input (0-10V), and sel
 You can choose between open-neck chords or bar chords (also called "barre") using the **STYLE** switch (or its CV input). You can also choose between muted strings in chords being marked as muted or left as open strings using the **MUTES** switch. When combined with a module like **Pick6** (see above), guitar chords can be played with the appropriate non-played strings ignored if desired; sometimes you might want to pick open strings in chords that might normally be muted.
 
 *NOTE: In this implementation, there are no bar chords for m6 or sus chords; they are substituted with open-neck chords.*
+
+<!--
+Two context-menu options:
+- **"Use V/Oct Root Note Selection"** will let you pick the root note using standard V/Oct. Note regardless of octave voltage passed in, there is only the one output octave.
+- **"PianoMan Mode"** will output piano-style chords! This feature follows the guitar-oriented 6 note format and is geared towards arpeggiation. Therefore note 1 is the root note one octave down, notes 2-4 are chord notes, note 5 is either a chord note or root note one octave up, and note 6 is the second note of the chord one octave up. Whew! Mutes indicate whether the note is part of the chord or one of the octave shift notes. You might want to set the **MUTES** switch to "open" to get all six notes.
+-->
 
 ## Rhythm1101
 
@@ -109,8 +118,8 @@ As mentioned, this is a polyphonic module, so you can convert up to 16 channels 
 It can also invert the output range if you want, either by selecting **"Invert Output"** in the context menu, or put the **HIGH** output value lower than the **LOW** output value. In the above example, if I put the **HIGH** output knob at 2.5V and the **LOW** output knob at 4V, I'd have the same output range, but inverted!
 
 There are two more context menu options:
-**"Quick Set Input Range..."** provides several common options for input ranges.
-**"Quick Set Output Range..."** provides several commong output ranges as well as some targetted at notes/octave ranges.
+- **"Quick Set Input Range..."** provides several common options for input ranges.
+- **"Quick Set Output Range..."** provides several commong output ranges as well as some targetted at notes/octave ranges.
 
 ## Pul5es
 
@@ -125,7 +134,7 @@ There is a button, **LOOP**, which will start counting again after sending a tri
 There is also a **RESET** input which can be used to reset the count at any time. Typically I connect this to the "reset" AND "run" outputs on my clock source.
 
 There is one context menu option:
-**"Invert Pulse Logic"** will send a trigger out on every **STEP** in *EXCEPT* for the **OUT ON** count number.
+- **"Invert Pulse Logic"** will send a trigger out on every **STEP** in *EXCEPT* for the **OUT ON** count number.
 -->
 ____
 
@@ -136,6 +145,8 @@ ____
 
 - Merc8or: Added new module!
 - Pul5es: Another new module!
+- Pick6: Offset End of Pattern option
+- Chord4Roy: PianoMan Mode option
 - All modules: Modules would _sometimes_ crash when trying to add to VCV when no audio interface or output was selected. Should be resolved. 🤞
 
 ## 2.0.3
