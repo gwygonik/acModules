@@ -46,21 +46,17 @@ At the end of the pattern selection are two custom pattern slots. These can be e
 There are two settings in the context menu:
 - **"Muted Note CV to 0"** which will output 0V when a note is muted or not-picked instead of leaving it at the last step's voltage
 - **"Smart Riff in Blank Pattern"** which will allow the Smart Riff functionality to do its thing when on a blank pattern, which you may actually want to be blank.
-<!--
 - **"Offset End of Pattern"** will reverse the sequence of the **EOP** setting, meaning that if you have that set to go to a blank pattern after the current pattern, Pick6 will start with the blank pattern and then go to the current pattern, and repeat from there. This allows a "dueling banjos" scenario, where two Pick6 modules take turns playing their pattern.
--->
 
 ## Pick6p
 
 Custom pattern programmer for **Pick6**. This should be attached directly to the right-side of **Pick6**; when attached, a LED will light on both modules near their names.
 
 This is simply a 2x8 knob panel that edits the last two patterns in **Pick6**.
-<!--
 
 There are several tools found in the context menu:
 - **"Copy..."** submenu lets you copy patterns from one side to the other, or from the current preset pattern in Pick6 to either side for customization.
 - **"Clear..."** submenu lets you clear either left or right patterns, or both patterns.
--->
 
 ## Chord4Roy
 
@@ -79,11 +75,9 @@ You can choose between open-neck chords or bar chords (also called "barre") usin
 
 *NOTE: In this implementation, there are no bar chords for m6 or sus chords; they are substituted with open-neck chords.*
 
-<!--
 Two context-menu options:
 - **"Use V/Oct Root Note Selection"** will let you pick the root note using standard V/Oct (0-10V). Note: regardless of octave voltage passed in, there is only the one *output* octave.
 - **"PianoMan Mode"** will output piano-style chords! This feature follows the guitar-oriented 6 note format and is geared towards arpeggiation. Therefore note 1 is the root note one octave down, notes 2-4 are chord notes, note 5 is either a chord note or root note one octave up, and note 6 is the second note of the chord one octave up. Whew! Mutes indicate whether the note is part of the chord or one of the octave shift notes. You might want to set the **MUTES** switch to "open" to get all six notes.
--->
 
 ## Rhythm1101
 
@@ -104,7 +98,6 @@ There are five(5) options in the context menu:
 - **"Clear All Patterns"** will clear all 16 patterns.
 - **"Reset To Factory Patterns"** will replace all the patterns with the preset grooves that come with the module.
 
-<!--
 ## Merc8or
 
 Quickly remap, scale, limit, and/or invert one range of polyphonic CV values to another.
@@ -137,12 +130,11 @@ There is also a **RESET** input which can be used to reset the count at any time
 
 There is one context menu option:
 - **"Invert Pulse Logic"** will send a trigger out on every **STEP** in *EXCEPT* for the **OUT ON** count number.
--->
+
 ____
 
 # Changelog
 
-<!--
 ## 2.0.4
 
 - Merc8or: Added new module!
@@ -155,7 +147,6 @@ ____
 
 - Chord4Roy: Fixes last remaining crash on windows
 - Pick6p: context menu options for copying/clearing patterns
--->
 
 ## 2.0.2
 - Addressed crash on Windows (and occassionally on Linux)
