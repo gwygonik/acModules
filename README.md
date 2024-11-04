@@ -81,7 +81,7 @@ You can choose between open-neck chords or bar chords (also called "barre") usin
 
 <!--
 Two context-menu options:
-- **"Use V/Oct Root Note Selection"** will let you pick the root note using standard V/Oct. Note regardless of octave voltage passed in, there is only the one output octave.
+- **"Use V/Oct Root Note Selection"** will let you pick the root note using standard V/Oct (0-10V). Note: regardless of octave voltage passed in, there is only the one *output* octave.
 - **"PianoMan Mode"** will output piano-style chords! This feature follows the guitar-oriented 6 note format and is geared towards arpeggiation. Therefore note 1 is the root note one octave down, notes 2-4 are chord notes, note 5 is either a chord note or root note one octave up, and note 6 is the second note of the chord one octave up. Whew! Mutes indicate whether the note is part of the chord or one of the octave shift notes. You might want to set the **MUTES** switch to "open" to get all six notes.
 -->
 
