@@ -2,8 +2,9 @@
 
 A collection of useful modules for VCV Rack, with both Dark and Light panels.
 
-> [!IMPORTANT]
+<!-- [!IMPORTANT]
 > 2.0.2 DOES fix crashes on Windows and Linux on all modules *except* Chord4Roy. A solution has been found and a new release (2.0.4) will come later this week. Stay tuned!
+-->
 
 ![Screenshot of acModules in VCV Rack](/images/acModules.png)
 
