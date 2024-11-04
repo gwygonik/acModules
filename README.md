@@ -140,6 +140,7 @@ ____
 - Merc8or: Added new module!
 - Pul5es: Another new module!
 - Pick6: Offset End of Pattern option
+- Chord4Roy: Added V/Oct for CV input option for root note selection
 - Chord4Roy: PianoMan Mode option
 - All modules: Modules would _sometimes_ crash when trying to add to VCV when no audio interface or output was selected. Should be resolved. 🤞
 
