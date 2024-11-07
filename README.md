@@ -119,11 +119,15 @@ There are two more context menu options:
 
 ## Pul5es
 
-Outputs a trigger pulse upon receiving a specified number of incoming pulses.
+Outputs one-shot or looping triggers upon receiving a specified number of incoming triggers. Because sometimes you just need to send a trigger every 23rd beat.
 
-*Video coming soon*
+[![Pul5es Video](/images/vidPul5es.png)](https://youtu.be/peWUNlWQi_c)
 
-This is a very simple module - send in a series of triggers to the **STEP** input, and after a number of triggers the **OUT ON** knob is set to is received, Pul5es will send a trigger to **OUT**. As an example, if I want to send a trigger to my mixer to mute a channel *after* 16 beats, I set the **OUT ON** knob to 17, and send in beat triggers from my clock source; after 16 beats, on the 17th trigger in, Pul5es sends a trigger out and my mixer channel gets muted.
+<!-- [!IMPORTANT]
+> There is a bug in the initial release (2.0.4) that doesn't save the loop state. This has been fixed in 2.0.5 and will be released soon!
+-->
+
+This is a very simple module - send in triggers to the **STEP** input, and on the number of triggers the **OUT ON** knob is set to, Pul5es will send a trigger to **OUT**. As an example, if I want to send a trigger to my mixer to mute a channel *after* 16 beats, I set the **OUT ON** knob to 17, and send in beat triggers from my clock source; after 16 beats, on the 17th trigger in, Pul5es sends a trigger out and my mixer channel gets muted.
 
 There is a button, **LOOP**, which will start counting again after sending a trigger. This enables you to repeatedly send a trigger every N-number of trigger **STEPS** in.
 
