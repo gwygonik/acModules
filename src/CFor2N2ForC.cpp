@@ -39,7 +39,7 @@ struct CFor2N2ForC : Module {
 	CFor2N2ForC() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 		for (int i = 0; i < 12; i++) {
-			configParam(KNOB_NOTECV + i, -10.f, 10.f, 0.f, string::f("Note (%s) CV", noteNameLabels[i]));
+			configParam(KNOB_NOTECV + i, -5.f, 10.f, 0.f, string::f("Note (%s) CV", noteNameLabels[i]));
 		}
 
 		configInput(INPUT_CV, "CV");
@@ -55,7 +55,7 @@ struct CFor2N2ForC : Module {
 
 		if (hasCV) {
 			double tmp;
-			float tmpV = clamp(inputs[INPUT_CV].getVoltage(),-10.f,10.f);
+			float tmpV = clamp(inputs[INPUT_CV].getVoltage(),-5.f,10.f);
 			if (tmpV < 0.f) tmpV += 10.0f; // push to between 0 and 10
 			curNote = static_cast<int>(clamp((modf(tmpV,&tmp)/voltPerNote)+1.f,1.f,12.f));
 			if (curNote != oldNote) {
@@ -96,7 +96,7 @@ struct CFor2N2ForC : Module {
 		for (int i=0;i<12;i++) {
 			hasPulsed[i] = outTrigger[i].process(args.sampleTime);
 			outputs[OUTPUT_TRIGGER].setVoltage(hasPulsed[i] ? 10.f : 0.f,i);
-			lights[LED_NOTE+i].setBrightness(((hasCV) && (curNote == i+1)) ? 2.f : 0.f);
+			lights[LED_NOTE+i].setBrightness(((hasCV) && (curNote == i+1)) ? 1.f : 0.f);
         }
 
 		outputs[OUTPUT_TRIGGER].setChannels(12);
