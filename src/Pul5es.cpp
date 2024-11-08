@@ -32,11 +32,15 @@ struct Pul5es : Module {
 	int delayCounter = 0;
 	bool delayBeforePlay = true;
 	bool useGateForLoop = false;
+	bool countOnlyWithGate = false;
+	bool isGateOn = false;
 
 	dsp::SchmittTrigger inReset;
 	dsp::SchmittTrigger inPulse;
 	dsp::SchmittTrigger inLoop;
 	dsp::PulseGenerator pulseOutput;
+	dsp::BooleanTrigger loopTrigger;
+
 
 	Pul5es() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -62,8 +66,15 @@ struct Pul5es : Module {
 				// gate is loop on/off
 				if (inputs[LOOP_INPUT].getVoltage() > 0.2f) {
 					loopAround = true;
+					if (countOnlyWithGate && !isGateOn) {
+						inPulseCount = 0;
+						delayCounter = 0;
+						delayBeforePlay = true;
+						isGateOn = true;
+                    }
                 } else {
 					loopAround = false;
+					isGateOn = false;
                 }
 				params[LOOP_PARAM].setValue(loopAround ? 1.f : 0.f);
             } else {
@@ -75,7 +86,10 @@ struct Pul5es : Module {
 
             }
 		} else {
-			loopAround = params[LOOP_PARAM].getValue() > 0.f;
+			if (loopTrigger.process(params[LOOP_PARAM].getValue() > 0.f)) {
+				loopAround ^= true;
+				params[LOOP_PARAM].setValue(loopAround ? 1.f : 0.f);
+			}
         }
 
 		if (inReset.process(inputs[RESET_INPUT].getVoltage(), 0.01f, 2.f)) {
@@ -86,13 +100,30 @@ struct Pul5es : Module {
 		}
 
 		if (inPulse.process(inputs[PULSE_INPUT].getVoltage(), 0.01f, 2.f)) {
-			if (!hasPulsed || loopAround) {
-				triggered = true;
+			if (countOnlyWithGate && useGateForLoop) {
+				// in this case we're only counting incoming pulses when gate is on
+				// this means we skip any pulse output unless we currently have gate input
+				if (isGateOn) {
+					if ((!hasPulsed || loopAround) ) {
+						triggered = true;
+					} else {
+						triggered = false;
+					}
+					delayCounter = 0;
+					delayBeforePlay = true;
+                } else {
+					triggered = false;
+                }
             } else {
-				triggered = false;
+				// otherwise, we count the incoming pulse
+				if ((!hasPulsed || loopAround) ) {
+					triggered = true;
+				} else {
+					triggered = false;
+				}
+				delayCounter = 0;
+				delayBeforePlay = true;
             }
-			delayCounter = 0;
-			delayBeforePlay = true;
 		}
 
 		if (triggered) {
@@ -137,6 +168,8 @@ struct Pul5es : Module {
 		json_object_set_new(rootJ, "useGateForLoop", val);
 		val = json_boolean(invertPulseLogic);
 		json_object_set_new(rootJ, "invertPulseLogic", val);
+		val = json_boolean(countOnlyWithGate);
+		json_object_set_new(rootJ, "countOnlyWithGate", val);
 
 		return rootJ;
 	}
@@ -156,6 +189,11 @@ struct Pul5es : Module {
 		val = json_object_get(rootJ, "useGateForLoop");
 		if (val) {
 			useGateForLoop = json_boolean_value(val);
+		}
+		// reset with gate?
+		val = json_object_get(rootJ, "countOnlyWithGate");
+		if (val) {
+			countOnlyWithGate = json_boolean_value(val);
 		}
 	}
 };
@@ -190,6 +228,7 @@ struct Pul5esWidget : ModuleWidget {
 		menu->addChild(createMenuLabel("Pul5es Options"));
 		menu->addChild(createBoolPtrMenuItem("Invert Pulse Logic", "", &module->invertPulseLogic));
 		menu->addChild(createBoolPtrMenuItem("Use Gate For Loop On/Off", "", &module->useGateForLoop));
+		menu->addChild(createBoolPtrMenuItem("Only Count With Gate On", "", &module->countOnlyWithGate));
 	}
 };
 
