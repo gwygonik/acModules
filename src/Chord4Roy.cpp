@@ -114,7 +114,9 @@ struct Chord4Roy : Module {
         if (inputs[INPUT_ROOTNOTE].isConnected()) {
 			if (useVOctNoteInput) {
 				double tmp;
-				curNote = static_cast<int>(clamp(floor(modf(inputs[INPUT_ROOTNOTE].getVoltage(),&tmp)/voltPerNote)+1.f,1.f,12.f));
+				float tmpV = clamp(inputs[INPUT_ROOTNOTE].getVoltage(),-10.f,10.f);
+				if (tmpV < 0.f) tmpV += 10.0f; // push to between 0 and 10
+				curNote = static_cast<int>(clamp((modf(tmpV,&tmp)/voltPerNote)+1.f,1.f,12.f));
             } else {
 				curNote = static_cast<int>(clamp(rescale(inputs[INPUT_ROOTNOTE].getVoltage(),0.f,10.f,1.f,12.f),1.f,12.f));
             }

@@ -76,6 +76,14 @@
             "tags": [
                 "Utility"
             ]
+        },
+        {
+            "slug": "CFor2N2ForC",
+            "name": "CFor2N2ForC",
+            "description": "Outputs a configurable CV value and/or trigger for each semitone CV input.",
+            "tags": [
+                "Utility"
+            ]
         }
 
     ]

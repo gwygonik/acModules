@@ -50,7 +50,7 @@ struct Merc8orDisplay : rack::LedDisplay {
 
 			// 0V middle
 			p.x = rack::mm2px(1.f);
-			p.y = rack::mm2px(27.f);
+			p.y = rack::mm2px(29.f);
 			nvgBeginPath(args.vg);
 			nvgMoveTo(args.vg, VEC_ARGS(p));
 			p.x = rack::mm2px(41.f);
