@@ -132,24 +132,24 @@ struct CFor2N2ForCWidget : ModuleWidget {
 
 		// input
 		// cv
-		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(12.445, 24.245)), module, CFor2N2ForC::INPUT_CV));
+		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(10.857, 23.440)), module, CFor2N2ForC::INPUT_CV));
 		// trig
-		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(12.445, 38.025)), module, CFor2N2ForC::INPUT_TRIGGER));
+		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(10.857, 37.219)), module, CFor2N2ForC::INPUT_TRIGGER));
 
 		// output
 		// cv
-		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(12.445, 92.508)), module, CFor2N2ForC::OUTPUT_CV));
+		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(10.857, 93.2)), module, CFor2N2ForC::OUTPUT_CV));
 		// trig
-		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(12.445, 106.288)), module, CFor2N2ForC::OUTPUT_TRIGGER));
+		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(10.857, 106.98)), module, CFor2N2ForC::OUTPUT_TRIGGER));
 
 
 		// notes
 		for (int i=0;i<12;i++) {
-			addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(28.545, 13.546+(i*8.692))), module, CFor2N2ForC::LED_NOTE + i));
-			addParam(createParamCentered<Trimpot>(mm2px(Vec(40.623, 13.546+(i*8.692))), module, CFor2N2ForC::KNOB_NOTECV+i));
+			addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(45.374, 13.413+(i*8.692))), module, CFor2N2ForC::LED_NOTE + i));
+			addParam(createParamCentered<Trimpot>(mm2px(Vec(36.965, 13.546+(i*8.692))), module, CFor2N2ForC::KNOB_NOTECV+i));
 		}
 
-
+		// There's always the sun
 
 	}
 

@@ -80,7 +80,7 @@
         {
             "slug": "CFor2N2ForC",
             "name": "CFor2N2ForC",
-            "description": "Output a configurable CV and/or trigger for each 1V/oct semitone CV input.",
+            "description": "Output a configurable CV and/or trigger across a 1V/Oct semitone CV input.",
             "tags": [
                 "Polyphonic",
                 "Utility"
