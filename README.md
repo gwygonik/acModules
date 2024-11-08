@@ -103,7 +103,7 @@ There are five(5) options in the context menu:
 
 Quickly remap, scale, limit, and/or invert one range of polyphonic CV values to another.
 
-*Video coming soon*
+[![Merc8or Video](/images/vidMerc8or.png)](https://youtu.be/wwNMGmk1ijA)
 
 At it's core, this module is just an CV attenuverter/scaler/offset/limiter. However, unlike other modules that do the same thing, this one doesn't require you to do math to scale one range into another range or chain multiple modules. For instance, if I want to use a LFO that goes from -5V to 5V to control volume of my mixer that takes 0-10V, but only have it go between 2.5V and 4V, that requires me to think much too hard about offsets and scale factors. With **Merc8or**, I can select the CV input (**IN**) range of 10V on the **HIGH** knob and 0V on the **LOW** knob; on the output side (**OUT**) I select 4V on the **HIGH** knob, and 2.5V on the **LOW** knob. Done! If the incoming values go outside of the in range, they automatically get limited.
 
@@ -123,9 +123,8 @@ Outputs one-shot or looping triggers upon receiving a specified number of incomi
 
 [![Pul5es Video](/images/vidPul5es.png)](https://youtu.be/peWUNlWQi_c)
 
-<!-- [!IMPORTANT]
+[!IMPORTANT]
 > There is a bug in the initial release (2.0.4) that doesn't save the loop state. This has been fixed in 2.0.5 and will be released soon!
--->
 
 This is a very simple module - send in triggers to the **STEP** input, and on the number of triggers the **OUT ON** knob is set to, Pul5es will send a trigger to **OUT**. As an example, if I want to send a trigger to my mixer to mute a channel *after* 16 beats, I set the **OUT ON** knob to 17, and send in beat triggers from my clock source; after 16 beats, on the 17th trigger in, Pul5es sends a trigger out and my mixer channel gets muted.
 
