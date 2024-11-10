@@ -123,9 +123,10 @@ Outputs one-shot or looping triggers upon receiving a specified number of incomi
 
 [![Pul5es Video](/images/vidPul5es.png)](https://youtu.be/peWUNlWQi_c)
 
+<!--
 [!IMPORTANT]
 > There is a bug in the initial release (2.0.4) that doesn't save the loop state. This has been fixed in 2.0.5 and in the VCV release pipeline!
-
+-->
 This is a very simple module - send in triggers to the **STEP** input, and on the number of triggers the **OUT ON** knob is set to, Pul5es will send a trigger to **OUT**. As an example, if I want to send a trigger on every 3rd input trigger, I set the **OUT ON** knob to 3 and turn on **LOOP**. Another example: I might want to mute a mixer channel *after* 16 beats, so I set the **OUT ON** knob to 17, and send in beat triggers from my clock source; after 16 beats, on the 17th trigger in, Pul5es sends a trigger out and my mixer channel gets muted.
 
 The input next to the **OUT ON** knob will let you use CV (0-10V) to control the timing of the output trigger instead of the knob.
@@ -136,11 +137,9 @@ There is also a **RESET** input which can be used to reset the count at any time
 
 There are several context menu options:
 - **"Invert Pulse Logic"** will send a trigger out on every **STEP** in *EXCEPT* for the **OUT ON** count number.
-<!--
 - **"Use Gate For Loop On/Off"** will change the way **LOOP** state works so that Pul5es only loops while a gate is connected to the loop CV input and is open/on/active.
 - **"Only Count With Gate On"** will cause Pul5es to not send any triggers *unless you are using gate input **and** the gate is open/on/active*.
--->
-<!--
+
 ## CFor2N2ForC
 
 Output a configurable CV and/or trigger across a 1V/Oct semitone CV input.
@@ -155,12 +154,11 @@ CFor2N2ForC will also take an incoming trigger (**TRIG IN**) and route it to a 1
 
 Context menu options:
 - **"Output Trigger On Note Change"** will send a trigger out when the incoming CV note changes. It will use the same 12-channel polyphonic output as incoming trigger outputs. This feature is useful for when you don't need incoming triggers but still want to trigger in a note-based way. Be aware that this only option only outputs a trigger when the note changes.
--->
+  
 ____
 
 # Changelog
 
-<!--
 ## 2.0.5
 
 - CFor2N2ForC: A new module!
@@ -168,7 +166,6 @@ ____
 - Pul5es: Added CV control of "out on" count and loop state (see docs above)
 - Chord4Roy: Wrapped negative voltage to positive range for extended V/Oct root note knob selection
 - Merc8or: visual tweak (0V center line wasn't centered!)
--->
 
 ## 2.0.4
 
