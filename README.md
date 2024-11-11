@@ -144,7 +144,7 @@ There are several context menu options:
 
 Output a configurable CV and/or trigger across a 1V/Oct semitone CV input.
 
-*Video Coming Soon*
+[![CFor2N2ForC Video](/images/vidCFor2.png)](https://youtu.be/CI5YjzepSeg)
 
 Have you ever wanted to send a specific CV voltage to a module based on an incoming musical note? While now you can!
 
