@@ -190,6 +190,19 @@ struct Merc8orDisplay : rack::LedDisplay {
 					p.y += rack::mm2px(1.f);
                 }
 				nvgText(args.vg, rack::mm2px(24.25f),p.y, stepsStr.c_str(), NULL);
+
+				// linked
+				nvgFontSize(args.vg, 7);
+				nvgFillColor(args.vg, nvgRGB(0xf0,0xf0,0xf0));
+				nvgTextAlign(args.vg, NVG_ALIGN_RIGHT);
+				p.y = rack::mm2px(57.f);
+				if (module->isLinked) {
+					stepsStr = "LINK";
+                } else {
+					stepsStr = "";
+                }
+				nvgText(args.vg, rack::mm2px(23.f),p.y, stepsStr.c_str(), NULL);
+
 			}
 
 

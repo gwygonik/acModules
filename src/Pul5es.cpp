@@ -1,4 +1,5 @@
 #include "acModules.hpp"
+#include "Pul5esDisplay.cpp"
 
 struct Pul5es : Module {
 	enum ParamId {
@@ -34,6 +35,8 @@ struct Pul5es : Module {
 	bool useGateForLoop = false;
 	bool countOnlyWithGate = false;
 	bool isGateOn = false;
+	float curSampleRate = 0.f;
+
 
 	dsp::SchmittTrigger inReset;
 	dsp::SchmittTrigger inPulse;
@@ -55,6 +58,8 @@ struct Pul5es : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
+		curSampleRate = args.sampleRate;
+
         pulseOnCount = params[OUTON_PARAM].getValue();
 		if (inputs[OUTON_INPUT].isConnected()) {
 			pulseOnCount = clamp(rescale(inputs[OUTON_INPUT].getVoltage(),0.f,10.f,2.f,256.f),2.f,256.f);
@@ -153,6 +158,7 @@ struct Pul5es : Module {
 			}
 		}
 
+
 		hasPulsedTrig = pulseOutput.process(args.sampleTime);
 		outputs[OUTPUT_PULSE].setVoltage(hasPulsedTrig ? 10.f : 0.f);
 
@@ -207,18 +213,28 @@ struct Pul5esWidget : ModuleWidget {
 		addChild(createWidget<ThemedScrew>(Vec(2, 0)));
 		addChild(createWidget<ThemedScrew>(Vec(box.size.x / 2 - 8, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(10.16, 15.611)), module, Pul5es::RESET_INPUT));
+		// reset
+		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(10.16, 14.023)), module, Pul5es::RESET_INPUT));
 
-		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(10.16, 33.901)), module, Pul5es::PULSE_INPUT));
+		// step in
+		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(10.16, 31.255)), module, Pul5es::PULSE_INPUT));
 
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(5.546, 51.454)), module, Pul5es::OUTON_PARAM));
-		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(14.163, 51.454)), module, Pul5es::OUTON_INPUT));
+		// out on params
+		addParam(createParamCentered<Trimpot>(mm2px(Vec(5.546, 54.49)), module, Pul5es::OUTON_PARAM));
+		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(14.163, 54.49)), module, Pul5es::OUTON_INPUT));
 
 		// loop
-		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(5.546, 69.743)), module, Pul5es::LOOP_PARAM, Pul5es::LOOP_LIGHT));
-		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(14.163, 69.743)), module, Pul5es::LOOP_INPUT));
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(5.546, 70.272)), module, Pul5es::LOOP_PARAM, Pul5es::LOOP_LIGHT));
+		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(14.163, 70.272)), module, Pul5es::LOOP_INPUT));
 
 		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(10.16, 89.153)), module, Pul5es::OUTPUT_PULSE));
+
+		Pul5esDisplay<Pul5es>* display = createWidget<Pul5esDisplay<Pul5es>>(mm2px(Vec(4.315, 44.172)));
+		display->box.size = mm2px(Vec(11.69,5.038));
+		display->displaySize = Vec(11.69,5.038);
+		display->module = module;
+		addChild(display);
+
 
 	}
 

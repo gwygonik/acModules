@@ -13,3 +13,4 @@ extern Model* modelRhythm1101;
 extern Model* modelMerc8or;
 extern Model* modelPul5es;
 extern Model* modelCFor2N2ForC;
+extern Model* modelMOREc8or;
