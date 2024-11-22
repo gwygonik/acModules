@@ -292,20 +292,6 @@ struct acTouchRibbon : rack::OpaqueWidget {
 				nvgFill(vg);
 			}
 
-
-			std::shared_ptr<rack::Font> font = APP->window->loadFont(rack::asset::plugin(pluginInstance, fontPath));
-			if (font) {
-				nvgFontSize(args.vg, 14);
-				nvgFontFaceId(args.vg, font->handle);
-				// low
-				std::string stepsStr = std::to_string(padY);
-				//stepsStr = stepsStr.substr(0, stepsStr.find("."));
-				nvgTextAlign(args.vg, NVG_ALIGN_RIGHT);
-				nvgFillColor(args.vg, nvgRGB(0xf0,0xf0,0xf0));
-				nvgText(vg, box.size.x - 5, box.size.y-6.f, stepsStr.c_str(), NULL);
-			}
-
-
 		} else {
 			// no module (library)
 			nvgStrokeColor(vg, nvgRGBA(0xff,0xff,0xff,0x40));
