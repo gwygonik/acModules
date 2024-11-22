@@ -93,6 +93,15 @@
             "tags": [
                 "Expander"
             ]
+        },
+        {
+            "slug": "CRBVi",
+            "name": "CRBVi",
+            "description": "Two-Dimensional performance instrument with on-screen note guides, selectable octave range, optional note snapping, and Y-axis curve shapes. Can also function as a playable VCA. Virtual re-interpretation of Wygonium C|RB hardware ribbon controller.",
+            "tags": [
+                "Controller",
+                "Utility"
+            ]
         }
 
     ]
