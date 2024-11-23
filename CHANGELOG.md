@@ -1,4 +1,7 @@
 ﻿# Changelog
+
+## 2.0.6
+- Coming soon!
 <!--
 ## 2.0.6
 - MOREc8or: A new (expander) module! Add input options to Merc8or output params. Wild stuff!
