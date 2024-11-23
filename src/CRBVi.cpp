@@ -202,7 +202,6 @@ struct CRBVi : Module {
 
 
 struct acTouchRibbon : rack::OpaqueWidget {
-	//std::string fontPath = rack::asset::system("res/fonts/ShareTechMono-Regular.ttf");
 
 	CRBVi* module;
 
@@ -213,7 +212,7 @@ struct acTouchRibbon : rack::OpaqueWidget {
 	float padX;
 	float padY;
 	double curKey;
-	double frac; // this is not really used, but necessary for modf
+	double frac; // this is not really used except for in modf
 	bool isDragging = false;
 	int keyColors[12] = {2,0,1,0,1,1,0,1,0,1,0,1};
 
