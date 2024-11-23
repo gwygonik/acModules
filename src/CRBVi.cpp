@@ -202,7 +202,7 @@ struct CRBVi : Module {
 
 
 struct acTouchRibbon : rack::OpaqueWidget {
-	std::string fontPath = rack::asset::system("res/fonts/ShareTechMono-Regular.ttf");
+	//std::string fontPath = rack::asset::system("res/fonts/ShareTechMono-Regular.ttf");
 
 	CRBVi* module;
 
