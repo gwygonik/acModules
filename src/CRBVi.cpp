@@ -204,8 +204,6 @@ struct CRBVi : Module {
 struct acTouchRibbon : rack::OpaqueWidget {
 	std::string fontPath = rack::asset::system("res/fonts/ShareTechMono-Regular.ttf");
 
-    std::function<void(float, float)> clickHandler;
-
 	CRBVi* module;
 
     acTouchRibbon() : OpaqueWidget() { }
@@ -226,7 +224,7 @@ struct acTouchRibbon : rack::OpaqueWidget {
 	void step() override {
 		if (module) {
 			frac = modf(double((padX/box.size.x)*(float)(module->numOctaves*12+1)),&curKey);
-			module->setPadInputs(padX/box.size.x, 10.0f-clamp((padY/(box.size.y-30.f)-.1f)*10.f,0.f,10.f), curKey);
+			module->setPadInputs(padX/box.size.x, 10.0f-clamp((padY/(box.size.y-22.f))*10.1f,0.f,10.f), curKey);
         }
 	}
 
@@ -293,7 +291,7 @@ struct acTouchRibbon : rack::OpaqueWidget {
 			}
 
 		} else {
-			// no module (library)
+			// no module (probably in library)
 			nvgStrokeColor(vg, nvgRGBA(0xff,0xff,0xff,0x40));
 			nvgStrokeWidth(vg, 2);
 			int keys = 13;
@@ -353,16 +351,19 @@ struct acTouchRibbon : rack::OpaqueWidget {
 	void onDragStart(const DragStartEvent &e) override {
 		module->isDragging = true;
 		isDragging = true;
+		e.consume(this);
     }
 	void onDragEnd(const DragEndEvent &e) override {
 		module->isDragging = false;
 		isDragging = false;
+		e.consume(this);
     }
 	void onDragHover(const DragHoverEvent &e) override {
 		if (isDragging) {
 			padX = e.pos.x;
 			padY = e.pos.y;
         }
+		e.consume(this);
     }
 
     void onButton(const ButtonEvent& e) override
