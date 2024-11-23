@@ -222,6 +222,7 @@ struct acTouchRibbon : rack::OpaqueWidget {
 
 	void step() override {
 		if (module) {
+			if (module->curSampleRate == 0.f) return;
 			frac = modf(double((padX/box.size.x)*(float)(module->numOctaves*12+1)),&curKey);
 			module->setPadInputs(padX/box.size.x, 10.0f-clamp((padY/(box.size.y-22.f))*10.1f,0.f,10.f), curKey);
         }
