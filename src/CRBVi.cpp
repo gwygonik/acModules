@@ -84,7 +84,7 @@ struct CRBVi : Module {
         }
 
 		if (!isNear(curX, padX)) {
-			curX += (padX - curX)/100.f;
+			curX += (padX - curX)/250.f;
         } else {
 			curX = padX;
         }
@@ -95,11 +95,10 @@ struct CRBVi : Module {
         }
 
 		if (isSnapped) {
-			curVolt = (float)baseOctave + (float)curKey * voltPerNote + halfVoltPerNote;
-			rawVolt = (float)baseOctave + (float)curKey * voltPerNote;
+			curVolt = (float)baseOctave + (float)curKey * voltPerNote;
         } else {
-			curVolt = clamp(rescale(curX,0.f,1.f,(float)baseOctave - halfVoltPerNote/3.f,(float)baseOctave + (float)numOctaves + voltPerNote + halfVoltPerNote/3.f),-5.f,5.f);			
-			rawVolt = clamp(rescale(curX,0.f,1.f,(float)baseOctave,(float)baseOctave + (float)numOctaves + voltPerNote),-5.f,5.f);			
+			// unsnapped has range added to lower and upper bounds to have the note be in center of onscreen keys
+			curVolt = clamp(rescale(curX,0.f,1.f,(float)baseOctave - halfVoltPerNote,(float)baseOctave + (float)numOctaves + halfVoltPerNote),-5.08f,5.08f);			
         }
 
 		outputs[OUTPUT_X].setVoltage( curVolt );			
@@ -116,13 +115,12 @@ struct CRBVi : Module {
 			outputs[OUTPUT_VCA].setChannels(1);
         }
 		
-		outputs[OUTPUT_POLY].setVoltage( curVolt, 0 );				  // note (X) adjusted for screen space
-		outputs[OUTPUT_POLY].setVoltage( getVoltageCurve(), 1 );	  // volume (Y with applied input curve)
-		outputs[OUTPUT_POLY].setVoltage( isDragging ? 10.f : 0.f, 2 );// gate (on)
-		outputs[OUTPUT_POLY].setVoltage( padX, 3 );					  // raw pad X position
-		outputs[OUTPUT_POLY].setVoltage( padY, 4 );					  // raw pad Y position
-		outputs[OUTPUT_POLY].setVoltage( rawVolt, 5 );				  // note (X) without screen adjustment
-		outputs[OUTPUT_POLY].setChannels(6);
+		outputs[OUTPUT_POLY].setVoltage( curVolt, 0 );						// note (X) adjusted for screen space
+		outputs[OUTPUT_POLY].setVoltage( getVoltageCurve(), 1 );			// volume (Y with applied input curve)
+		outputs[OUTPUT_POLY].setVoltage( isDragging ? 10.f : 0.f, 2 );		// gate (on)
+		outputs[OUTPUT_POLY].setVoltage( clamp(padX*10.f,0.f,10.f), 3 );	// raw pad X position (0-10V)
+		outputs[OUTPUT_POLY].setVoltage( padY, 4 );							// raw pad Y position (0-10V)
+		outputs[OUTPUT_POLY].setChannels(5);
 
 		lights[LIGHT_SNAP].setBrightness(isSnapped ? 0.95f : 0.f);
 
