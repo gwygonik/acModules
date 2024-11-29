@@ -155,38 +155,20 @@ CFor2N2ForC will also take an incoming trigger (**TRIG IN**) and route it to a 1
 Context menu options:
 - **"Output Trigger On Note Change"** will send a trigger out when the incoming CV note changes. It will use the same 12-channel polyphonic output as incoming trigger outputs. This feature is useful for when you don't need incoming triggers but still want to trigger in a note-based way. Be aware that this only option only outputs a trigger when the note changes.
   
+## MOREc8or
+
+An expander module for Merc8or, which adds CV control of Merc8or's output range parameters, including inverting, and linking. 
+
+More details and video soon.
+
+## CRB Vi
+
+CRB Vi is a two-dimensional pad calibrated for note input across multiple octaves and with multiple Y-axis input curves, turning a simple XY pad into a performance instrument.
+
+More details and video soon.
+
 ____
 
 # Changelog
 
-## 2.0.5
-
-- CFor2N2ForC: A new module!
-- Pul5es: fixed not saving loop state
-- Pul5es: Added CV control of "out on" count and loop state (see docs above)
-- Chord4Roy: Wrapped negative voltage to positive range for extended V/Oct root note knob selection
-- Merc8or: visual tweak (0V center line wasn't centered!)
-
-## 2.0.4
-
-- Merc8or: Added new module!
-- Pul5es: Another new module!
-- Pick6: Offset End of Pattern option
-- Chord4Roy: Added V/Oct for CV input option for root note selection
-- Chord4Roy: PianoMan Mode option
-- All modules: Modules would _sometimes_ crash when trying to add to VCV when no audio interface or output was selected. Should be resolved. 🤞
-
-## 2.0.3
-
-- Chord4Roy: Fixes last remaining crash on windows
-- Pick6p: context menu options for copying/clearing patterns
-
-## 2.0.2
-- Addressed crash on Windows (and occassionally on Linux)
-- Ov3rCross: Added trigger out on zone change
-- Chord4Roy: Aligned visuals with other modules
-- Rhythm1101: Added new module!
-
-## 2.0.0
-- Initial release
-
+[Now in its own document!](./CHANGELOG.md)
