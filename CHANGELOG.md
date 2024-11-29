@@ -1,15 +1,13 @@
 ﻿# Changelog
 
 ## 2.0.6
-- Coming soon!
-<!--
-## 2.0.6
+
 - MOREc8or: A new (expander) module! Add input options to Merc8or output params. Wild stuff!
 - CRBVi: Another new module! A 2D performance instrument/playable VCA (XY pad with bells and whistles).
-- Merc8or: Output snapping to octaves or semitones (not scale quantization)
+- Merc8or: Output snapping to octaves or semitones (this is like chromatic scale quantization)
 - Merc8or: When snapping, option to add half-semitone to output (added stability with some modules)
 - Pul5es: Added display for "Out On..." param because it was suggested and is the right thing to do.
--->
+
 ## 2.0.5
 
 - CFor2N2ForC: A new module!

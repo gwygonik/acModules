@@ -92,7 +92,18 @@ struct MOREc8or : Module {
 			canLink = false;
 			isHLLinked = false;
         }
-		
+
+		if (canLink && linkTrigger.process(params[LINK_PARAM].getValue() > 0.f)) {
+			isHLLinked ^= true;
+			params[LINK_PARAM].setValue(isHLLinked ? 1.f : 0.f);
+		}
+		lights[LINK_LIGHT].setBrightness(canLink && isHLLinked);
+
+		if (isHLLinked) {
+			hasCVHIGH = false; // disable high CV -- everything linked is driven by low
+			canInvert = false;
+        }
+
 		if (canInvert && invertTrigger.process(params[INVERT_PARAM].getValue() > 0.f)) {
 			isInvert = true;
 			params[INVERT_PARAM].setValue(isInvert ? 1.f : 0.f);
@@ -121,15 +132,6 @@ struct MOREc8or : Module {
             }
         }
 
-		if (canLink && linkTrigger.process(params[LINK_PARAM].getValue() > 0.f)) {
-			isHLLinked ^= true;
-			params[LINK_PARAM].setValue(isHLLinked ? 1.f : 0.f);
-		}
-		lights[LINK_LIGHT].setBrightness(canLink && isHLLinked);
-
-		if (isHLLinked) {
-			hasCVHIGH = false; // disable high CV -- everything linked is driven by low
-        }
 
 
 		if (leftExpander.module) {
