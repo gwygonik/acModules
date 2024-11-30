@@ -159,13 +159,17 @@ Context menu options:
 
 An expander module for Merc8or, which adds CV control of Merc8or's output range parameters, including inverting, and linking. 
 
-More details and video soon.
+[![MOREc8or Video](/images/vidMorec8or.png)](https://youtu.be/CW1P8HefElA)
 
-## CRB Vi
+More details soon, but for now the video explains most everything.
 
-CRB Vi is a two-dimensional pad calibrated for note input across multiple octaves and with multiple Y-axis input curves, turning a simple XY pad into a performance instrument.
+## C|RB Vi
 
-More details and video soon.
+C|RB Vi is a two-dimensional (XY) pad calibrated for note input across multiple octaves and with multiple Y-axis input curves, turning a simple XY pad into a performance instrument. It can also function as a playable VCA.
+
+[![C|RB Vi Video](/images/vidCRBVi.png)](https://youtu.be/v6m56E9tSqk)
+
+More details soon.
 
 ____
 
