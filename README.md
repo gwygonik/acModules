@@ -2,10 +2,6 @@
 
 A collection of useful modules for VCV Rack, with both Dark and Light panels.
 
-<!-- [!IMPORTANT]
-> 2.0.2 DOES fix crashes on Windows and Linux on all modules *except* Chord4Roy. A solution has been found and a new release (2.0.4) will come later this week. Stay tuned!
--->
-
 ![Screenshot of acModules in VCV Rack](/images/acModules.png)
 
 ## Ov3rCross
@@ -116,6 +112,8 @@ All of these features let you use a single modulation source for multiple purpos
 There are two more context menu options:
 - **"Quick Set Input Range..."** provides several common options for input ranges.
 - **"Quick Set Output Range..."** provides several commong output ranges as well as some targetted at notes/octave ranges.
+- **"Invert Output"** will invert the output range (when not using MOREc8or)
+- **"Output Snapping..."** allows the output range knobs *and* the voltage output to snap to **Octaves** or **Semitones** (or **None**). An additional option when any snap setting is to add a **Half-Semitone Offset** to the output, which is useful for some 1V/Oct modules that will "flicker" between notes depending upon rounding methedology. This is niche, but might be useful to you.
 
 ## Pul5es
 
@@ -123,10 +121,6 @@ Outputs one-shot or looping triggers upon receiving a specified number of incomi
 
 [![Pul5es Video](/images/vidPul5es.png)](https://youtu.be/peWUNlWQi_c)
 
-<!--
-[!IMPORTANT]
-> There is a bug in the initial release (2.0.4) that doesn't save the loop state. This has been fixed in 2.0.5 and in the VCV release pipeline!
--->
 This is a very simple module - send in triggers to the **STEP** input, and on the number of triggers the **OUT ON** knob is set to, Pul5es will send a trigger to **OUT**. As an example, if I want to send a trigger on every 3rd input trigger, I set the **OUT ON** knob to 3 and turn on **LOOP**. Another example: I might want to mute a mixer channel *after* 16 beats, so I set the **OUT ON** knob to 17, and send in beat triggers from my clock source; after 16 beats, on the 17th trigger in, Pul5es sends a trigger out and my mixer channel gets muted.
 
 The input next to the **OUT ON** knob will let you use CV (0-10V) to control the timing of the output trigger instead of the knob.
@@ -157,11 +151,17 @@ Context menu options:
   
 ## MOREc8or
 
-An expander module for Merc8or, which adds CV control of Merc8or's output range parameters, including inverting, and linking. 
+A right-side expander module for Merc8or, which adds CV control of Merc8or's output range parameters, including inverting, and linking. 
 
 [![MOREc8or Video](/images/vidMorec8or.png)](https://youtu.be/CW1P8HefElA)
 
-More details soon, but for now the video explains most everything.
+This module must be connected on the right-side of a Merc8or module; when attached, the small light in the names of both Merc8or and Morec8or will illuminate. There are three sections of controls **Invert**, **Link**, and CV inputs for the **High** and **Low** output range.
+
+**Invert** provides manual, trigger, and gate control of inverting the output range in Merc8or. Pressing the manual button will simply invert the output range. CV input, coupled with the CV input type switch, allows remote triggering of the invert state. With the switch set to **Trig**, a CV trigger will act the same as the manual button and toggle the inverted state. When the switch is set to **Gate**, the output range will be temporarily inverted only while the CV is open/on.
+
+**Link** will, well, *link* the High and Low output voltages together. For instance, if the Low output is set at 1V, and the High output is set at 2V, after enabling **Link**, the High output voltage will stay 1V away from the Low output voltage. When **Link** is enabled, only the Low output range knob in Merc8or will adjust the values; the LEDs next to each knob show either green or red depending upon their active or inactive state, respectively. Also, when enabled, the **Invert** controls become disabled.
+
+Finally, the inputs at the bottom allow control of the output range via CV. Both inputs will set their respective output to any voltage you provide, from -10V to 10V. When cables are connected, **Invert** will be disabled. When **Link** is *enabled*, only the Low CV input will have any effect.
 
 ## C|RB Vi
 
