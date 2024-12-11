@@ -1,16 +1,23 @@
 #include "acModules.hpp"
 #include <math.hpp>
 
-struct CRBVi : Module {
+struct CRBViXL : Module {
 	enum ParamId {
 		PARAM_BASEOCT,
 		PARAM_OCTAVES,
 		PARAM_INPUTCURVE,
 		PARAM_SNAP,
+		PARAM_MODTOX,
+		PARAM_MODTOY,
+		PARAM_CURVEMODX,
+		PARAM_CURVEMODY,
+		PARAM_MODVCA,
+		PARAM_MODRANGE,
 		PARAMS_LEN
 	};
 	enum InputId {
 		INPUT_VCA,
+		INPUT_MOD,
 		INPUTS_LEN
 	};
 	enum OutputId {
@@ -23,6 +30,9 @@ struct CRBVi : Module {
 	};
 	enum LightId {
 		LIGHT_SNAP,
+		LIGHT_CURVEMODX,
+		LIGHT_CURVEMODY,
+		LIGHT_MODVCA,
 		LIGHTS_LEN
 	};
 
@@ -44,14 +54,33 @@ struct CRBVi : Module {
 	bool showKeys = true;
 	bool hasExtIn = false;
 	int yAxisRangeMode = 0;
-	dsp::BooleanTrigger snapTrigger;
 
-	CRBVi() {
+	bool curveModX = false;
+	bool curveModY = false;
+	bool modVCA = false;
+	bool hasMod = false;
+	float modVoltageIN = 0.f;
+	float modVoltageX  = 0.f;
+	float modVoltageY  = 0.f;
+
+	dsp::BooleanTrigger snapTrigger;
+	dsp::BooleanTrigger curveModXTrigger;
+	dsp::BooleanTrigger curveModYTrigger;
+	dsp::BooleanTrigger modVCATrigger;
+
+	CRBViXL() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 		configParam(PARAM_BASEOCT, -5.f, 4.f, 0.f, "Base Octave");
-		configParam(PARAM_OCTAVES, 1.f, 3.f, 1.f, "Octaves");
+		configParam(PARAM_OCTAVES, 1.f, 5.f, 1.f, "Octaves");
 		configParam(PARAM_INPUTCURVE, 0.f, 4.f, 0.f, "Input Curve");
 		configSwitch(PARAM_SNAP, 0.f,1.f,0.f, "Snap To Notes");
+		configParam(PARAM_MODTOX, -1.f, 1.f, 0.f, "Modulation To Note (X)");
+		configParam(PARAM_MODTOY, -1.f, 1.f, 0.f, "Modulation To Volume (Y)");
+		configSwitch(PARAM_CURVEMODX, 0.f,1.f,0.f, "Use Input Curve");
+		configSwitch(PARAM_CURVEMODY, 0.f,1.f,0.f, "Use Input Curve");
+		configSwitch(PARAM_MODVCA, 0.f,1.f,0.f, "Apply To VCA");
+		configInput(INPUT_MOD, "Modulation");
+		configSwitch(PARAM_MODRANGE, 0.f, 2.f, 0.f, "Modulation Voltage Range", {"-5V to +5V", "0V to +10V", "0V to +5V"});
 		configOutput(OUTPUT_X, "Note (X)");
 		configOutput(OUTPUT_Y, "Volume (Y)");
 		configOutput(OUTPUT_GATE, "Gate");
@@ -74,9 +103,19 @@ struct CRBVi : Module {
 		currentInputCurve = (int)params[PARAM_INPUTCURVE].getValue();
 
 		hasExtIn = inputs[INPUT_VCA].isConnected();
+		hasMod   = inputs[INPUT_MOD].isConnected();
 
 		if (snapTrigger.process(params[PARAM_SNAP].getValue() > 0.f)) {
 			isSnapped ^= true;
+        }
+		if (curveModXTrigger.process(params[PARAM_CURVEMODX].getValue() > 0.f)) {
+			curveModX ^= true;
+        }
+		if (curveModYTrigger.process(params[PARAM_CURVEMODY].getValue() > 0.f)) {
+			curveModY ^= true;
+        }
+		if (modVCATrigger.process(params[PARAM_MODVCA].getValue() > 0.f)) {
+			modVCA ^= true;
         }
 
 		if (!isDragging) {
@@ -95,14 +134,34 @@ struct CRBVi : Module {
         }
 
 		if (isSnapped) {
-			curVolt = (float)baseOctave + (float)curKey * voltPerNote;
+			curVolt = clamp((float)baseOctave + (float)curKey * voltPerNote,-5.f,5.f);
         } else {
 			// unsnapped has range added to lower and upper bounds to have the note be in center of onscreen keys
 			curVolt = clamp(rescale(curX,0.f,1.f,(float)baseOctave - halfVoltPerNote,(float)baseOctave + (float)numOctaves + halfVoltPerNote),-5.08f,5.08f);			
         }
 
-		outputs[OUTPUT_X].setVoltage( curVolt );			
-		outputs[OUTPUT_Y].setVoltage( getVoltageCurve() );
+		if (hasMod) {
+			modVoltageIN = inputs[INPUT_MOD].getVoltage();
+			if (params[PARAM_MODRANGE].getValue() == 0) {
+				// -5 to 5
+				modVoltageIN /= 5.0f;
+			} else if (params[PARAM_MODRANGE].getValue() == 1) {
+				// 0 to 10
+				modVoltageIN /= 5.0f;
+				modVoltageIN -= 1.f;
+			} else {
+				// 0 to 5
+				modVoltageIN /= 2.5f;
+				modVoltageIN -= 1.f;
+            }
+			modVoltageIN = clamp(modVoltageIN,-1.f,1.f);
+
+			modVoltageX  = halfVoltPerNote * (modVoltageIN * params[PARAM_MODTOX].getValue() * (curveModX ? getVoltageCurveFor(curY/10.f) : 1.f));
+			modVoltageY  = (modVoltageIN * params[PARAM_MODTOY].getValue() * (isDragging ? 1.f : 0.f));
+        }
+
+		outputs[OUTPUT_X].setVoltage( clamp(curVolt + (hasMod ? modVoltageX : 0.f), -10.f, 10.f) );			
+		outputs[OUTPUT_Y].setVoltage( voltToOutputRange(getVoltageCurveFor(clamp(curY+(hasMod ? (modVoltageY * (curveModY ? getVoltageCurveFor(curY/10.f) : 1.f)) : 0.f),0.f,10.f)/10.f)) );
 		outputs[OUTPUT_GATE].setVoltage( isDragging ? 10.f : 0.f);
 
 		if (hasExtIn) {
@@ -115,22 +174,25 @@ struct CRBVi : Module {
 			outputs[OUTPUT_VCA].setChannels(1);
         }
 		
-		outputs[OUTPUT_POLY].setVoltage( curVolt, 0 );						// note (X) adjusted for screen space
-		outputs[OUTPUT_POLY].setVoltage( getVoltageCurve(), 1 );			// volume (Y with applied input curve)
+		outputs[OUTPUT_POLY].setVoltage( clamp(curVolt + (hasMod ? modVoltageX : 0.f), -10.f, 10.f), 0 );						// note (X) adjusted for screen space
+		outputs[OUTPUT_POLY].setVoltage( voltToOutputRange(getVoltageCurveFor(clamp(curY+(hasMod ? (modVoltageY * (curveModY ? getVoltageCurveFor(curY/10.f) : 1.f)) : 0.f),0.f,10.f)/10.f)) , 1 );			// volume (Y with applied input curve)
 		outputs[OUTPUT_POLY].setVoltage( isDragging ? 10.f : 0.f, 2 );		// gate (on)
 		outputs[OUTPUT_POLY].setVoltage( clamp(padX*10.f,0.f,10.f), 3 );	// raw pad X position (0-10V)
 		outputs[OUTPUT_POLY].setVoltage( padY, 4 );							// raw pad Y position (0-10V)
 		outputs[OUTPUT_POLY].setChannels(5);
 
 		lights[LIGHT_SNAP].setBrightness(isSnapped ? 0.95f : 0.f);
+		lights[LIGHT_CURVEMODX].setBrightness(curveModX ? 0.95f : 0.f);
+		lights[LIGHT_CURVEMODY].setBrightness(curveModY ? 0.95f : 0.f);
+		lights[LIGHT_MODVCA].setBrightness(modVCA ? 0.95f : 0.f);
 
 	}
 
-	float getVoltageCurve() {
-		float outVolt = curY/10.f;
+	float getVoltageCurveFor(float inVolt) {
+		float outVolt = inVolt;// clamp(curY+(hasMod ? modVoltageY : 0.f),0.f,10.f)/10.f;
 		switch (currentInputCurve) {
 		  case 1:
-			outVolt = outVolt*outVolt*(outVolt+0.25f);// 1.f - sqrtf(1.0f - (outVolt*outVolt));
+			outVolt = outVolt*outVolt*(outVolt+0.25f);
 			break;
 		  case 2:
 			outVolt = -(cosf(M_PI * outVolt)-1.f)/2.f;
@@ -142,7 +204,10 @@ struct CRBVi : Module {
 			outVolt = (outVolt > 0.01f ? 1.f : 0.f);
 			break;
 		}
-
+		return outVolt;
+	}
+	float voltToOutputRange(float inVolt) {
+		float outVolt = inVolt;
 		switch (yAxisRangeMode) {
 			case 0:
 				// 0-10
@@ -163,23 +228,13 @@ struct CRBVi : Module {
         }
 		return outVolt;
     }
+
 	float getVCAVoltageCurve(float inVoltage) {
-		float outVolt = curY/10.f;
-		switch (currentInputCurve) {
-		  case 1:
-			outVolt = 1.f - sqrtf(1.f - (outVolt*(outVolt+0.09f)));
-			break;
-		  case 2:
-			outVolt = -(cosf(M_PI * outVolt)-1.f)/2.f;
-			break;
-		  case 3:
-			outVolt = sinf((outVolt * M_PI)/2.f);
-			break;
-		  case 4:
-			outVolt = (outVolt > 0.01f ? 1.f : 0.f);
-			break;
-		}
-		return outVolt * inVoltage;
+		float outVolt = getVoltageCurveFor(curY/10.f);
+		if (hasMod && modVCA) {
+			outVolt *= modVoltageY;
+        }
+		return clamp(outVolt * inVoltage, -5.f,5.f);
     }
 
 	void setPadInputs(float mX, float mY, int key) {
@@ -201,6 +256,12 @@ struct CRBVi : Module {
 		json_object_set_new(rootJ, "showKeys", val);
 		val = json_integer(yAxisRangeMode);
 		json_object_set_new(rootJ, "yAxisRangeMode", val);
+		val = json_boolean(curveModX);
+		json_object_set_new(rootJ, "curveModX", val);
+		val = json_boolean(curveModY);
+		json_object_set_new(rootJ, "curveModY", val);
+		val = json_boolean(modVCA);
+		json_object_set_new(rootJ, "modVCA", val);
 
 		return rootJ;
 	}
@@ -220,6 +281,21 @@ struct CRBVi : Module {
 		if (val) {
 			yAxisRangeMode = json_integer_value(val);
         }
+		// mod X curve
+		val = json_object_get(rootJ, "curveModX");
+		if (val) {
+			curveModX = json_boolean_value(val);
+        }
+		// mod Y curve
+		val = json_object_get(rootJ, "curveModY");
+		if (val) {
+			curveModY = json_boolean_value(val);
+        }
+		// mod VCA
+		val = json_object_get(rootJ, "modVCA");
+		if (val) {
+			modVCA = json_boolean_value(val);
+        }
 	}
 
 };
@@ -227,7 +303,7 @@ struct CRBVi : Module {
 
 struct acTouchRibbon : rack::OpaqueWidget {
 
-	CRBVi* module = NULL;
+	CRBViXL* module = NULL;
 
 	float padX;
 	float padY;
@@ -399,40 +475,49 @@ struct acTouchRibbon : rack::OpaqueWidget {
 };
 
 
-struct CRBViWidget : ModuleWidget {
+struct CRBViXLWidget : ModuleWidget {
 
-	CRBViWidget(CRBVi* module) {
+	CRBViXLWidget(CRBViXL* module) {
 		setModule(module);
 
-		setPanel(createPanel(asset::plugin(pluginInstance, "res/CRBVi-White.svg"), asset::plugin(pluginInstance, "res/CRBVi-Dark.svg")));
+		setPanel(createPanel(asset::plugin(pluginInstance, "res/CRBViXL-White.svg"), asset::plugin(pluginInstance, "res/CRBViXL-Dark.svg")));
 		addChild(createWidget<ThemedScrew>(Vec(2, 0)));
 		addChild(createWidget<ThemedScrew>(Vec(box.size.x / 2 - 8, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(111.373, 105.013)), module, CRBVi::OUTPUT_X));
-		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(126.190, 105.013)), module, CRBVi::OUTPUT_Y));
-		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(140.477, 105.013)), module, CRBVi::OUTPUT_GATE));
-		addInput(createInputCentered<ThemedPJ301MPort>( mm2px(Vec(111.373, 118.772)), module, CRBVi::INPUT_VCA));
-		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(126.190, 118.772)), module, CRBVi::OUTPUT_VCA));
-		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(140.477, 118.772)), module, CRBVi::OUTPUT_POLY));
+		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(263.497, 105.013)), module, CRBViXL::OUTPUT_X));
+		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(278.314, 105.013)), module, CRBViXL::OUTPUT_Y));
+		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(292.601, 105.013)), module, CRBViXL::OUTPUT_GATE));
+		addInput(createInputCentered<ThemedPJ301MPort>( mm2px(Vec(263.497, 118.772)), module, CRBViXL::INPUT_VCA));
+		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(278.314, 118.772)), module, CRBViXL::OUTPUT_VCA));
+		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(292.601, 118.772)), module, CRBViXL::OUTPUT_POLY));
 
-		addParam(createParamCentered<Davies1900hWhiteKnob>(mm2px(Vec(20.014, 108.75)), module, CRBVi::PARAM_BASEOCT));
-		addParam(createParamCentered<Davies1900hWhiteKnob>(mm2px(Vec(44.107, 108.75)), module, CRBVi::PARAM_OCTAVES));
-		addParam(createParamCentered<Davies1900hWhiteKnob>(mm2px(Vec(86.456, 108.75)), module, CRBVi::PARAM_INPUTCURVE));
+		addInput(createInputCentered<ThemedPJ301MPort>(mm2px(Vec(135.151, 105.013)), module, CRBViXL::INPUT_MOD));
+		addParam(createParamCentered<CKSSThreeHorizontal>(mm2px(Vec(135.151, 117.535)), module, CRBViXL::PARAM_MODRANGE));
 
-		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(65.251, 108.75)), module, CRBVi::PARAM_SNAP, CRBVi::LIGHT_SNAP));
+		addParam(createParamCentered<Davies1900hWhiteKnob>(mm2px(Vec(20.014, 108.75)), module, CRBViXL::PARAM_BASEOCT));
+		addParam(createParamCentered<Davies1900hWhiteKnob>(mm2px(Vec(49.398, 108.75)), module, CRBViXL::PARAM_OCTAVES));
+		addParam(createParamCentered<Davies1900hWhiteKnob>(mm2px(Vec(102.331, 108.75)), module, CRBViXL::PARAM_INPUTCURVE));
+
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(75.834, 108.75)), module, CRBViXL::PARAM_SNAP, CRBViXL::LIGHT_SNAP));
+
+		addParam(createParamCentered<Davies1900hWhiteKnob>(mm2px(Vec(157.967, 108.75)), module, CRBViXL::PARAM_MODTOX));
+		addParam(createParamCentered<Davies1900hWhiteKnob>(mm2px(Vec(195.009, 108.75)), module, CRBViXL::PARAM_MODTOY));
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(173.842, 108.75)), module, CRBViXL::PARAM_CURVEMODX, CRBViXL::LIGHT_CURVEMODX));
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(210.884, 108.75)), module, CRBViXL::PARAM_CURVEMODY, CRBViXL::LIGHT_CURVEMODY));
+		addParam(createLightParamCentered<VCVLightButton<MediumSimpleLight<WhiteLight>>>(mm2px(Vec(226.759, 108.75)), module, CRBViXL::PARAM_MODVCA, CRBViXL::LIGHT_MODVCA));
 
 		acTouchRibbon* ribbon = createWidget<acTouchRibbon>(mm2px(Vec(7.2f, 15.f)));
 		ribbon->box.pos = mm2px(Vec(7.2f,15.f));
-		ribbon->box.size = mm2px(Vec(138.f, 80.f));
+		ribbon->box.size = mm2px(Vec(289.71f, 80.f));
 		ribbon->module = module;
 		addChild(ribbon);
 		
 	}
 
 	void appendContextMenu(Menu* menu) override {
-		CRBVi* module = getModule<CRBVi>();
+		CRBViXL* module = getModule<CRBViXL>();
 		menu->addChild(new MenuSeparator);
-		menu->addChild(createMenuLabel("CRBVi Options"));
+		menu->addChild(createMenuLabel("CRB Vi XL Options"));
 		menu->addChild(createBoolPtrMenuItem("Show Keys in Pad", "", &module->showKeys));
 		menu->addChild(createIndexPtrSubmenuItem("Y-Axis Range (Non-VCA)",
 			{"0V to 10V (Default)", "0V to 5V", "-5V to 5V"},
@@ -442,4 +527,4 @@ struct CRBViWidget : ModuleWidget {
 
 };
 
-Model* modelCRBVi = createModel<CRBVi, CRBViWidget>("CRBVi");
+Model* modelCRBViXL = createModel<CRBViXL, CRBViXLWidget>("CRBViXL");

@@ -15,3 +15,4 @@ extern Model* modelPul5es;
 extern Model* modelCFor2N2ForC;
 extern Model* modelMOREc8or;
 extern Model* modelCRBVi;
+extern Model* modelCRBViXL;

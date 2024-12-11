@@ -16,4 +16,5 @@ void init(Plugin* p) {
 	p->addModel(modelCFor2N2ForC);
 	p->addModel(modelMOREc8or);
 	p->addModel(modelCRBVi);
+	p->addModel(modelCRBViXL);
 }
