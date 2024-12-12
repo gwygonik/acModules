@@ -1,5 +1,13 @@
 ﻿# Changelog
 
+## 2.0.7
+
+- CRBViXL: A new eXtra Large version of CRB! With added features!
+- CRBVi: adjusted input curve #1 to be better at the top of the range
+- CRBVi: added guide types and quartertone snapping
+- CRBVi: visual tweaks
+- CFor2N2ForC: visual tweaks
+
 ## 2.0.6
 
 - MOREc8or: A new (expander) module! Add input options to Merc8or output params. Wild stuff!

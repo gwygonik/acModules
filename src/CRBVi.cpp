@@ -44,6 +44,7 @@ struct CRBVi : Module {
 	bool showKeys = true;
 	bool hasExtIn = false;
 	int yAxisRangeMode = 0;
+	int guideType = 0;
 	dsp::BooleanTrigger snapTrigger;
 
 	CRBVi() {
@@ -84,7 +85,7 @@ struct CRBVi : Module {
         }
 
 		if (!isNear(curX, padX)) {
-			curX += (padX - curX)/250.f;
+			curX += (padX - curX)/500.f;
         } else {
 			curX = padX;
         }
@@ -95,7 +96,7 @@ struct CRBVi : Module {
         }
 
 		if (isSnapped) {
-			curVolt = (float)baseOctave + (float)curKey * voltPerNote;
+			curVolt = clamp((float)baseOctave + (float)curKey * (guideType == 1 ? halfVoltPerNote : voltPerNote),-5.08f,5.08f);
         } else {
 			// unsnapped has range added to lower and upper bounds to have the note be in center of onscreen keys
 			curVolt = clamp(rescale(curX,0.f,1.f,(float)baseOctave - halfVoltPerNote,(float)baseOctave + (float)numOctaves + halfVoltPerNote),-5.08f,5.08f);			
@@ -201,6 +202,8 @@ struct CRBVi : Module {
 		json_object_set_new(rootJ, "showKeys", val);
 		val = json_integer(yAxisRangeMode);
 		json_object_set_new(rootJ, "yAxisRangeMode", val);
+		val = json_integer(guideType);
+		json_object_set_new(rootJ, "guideType", val);
 
 		return rootJ;
 	}
@@ -220,6 +223,10 @@ struct CRBVi : Module {
 		if (val) {
 			yAxisRangeMode = json_integer_value(val);
         }
+		val = json_object_get(rootJ, "guideType");
+		if (val) {
+			guideType = json_integer_value(val);
+        }
 	}
 
 };
@@ -235,11 +242,12 @@ struct acTouchRibbon : rack::OpaqueWidget {
 	double frac; // this is not really used except for in modf
 	bool isDragging = false;
 	int keyColors[12] = {2,0,1,0,1,1,0,1,0,1,0,1};
+	int keyColorsQ[24] = {4,1,0,3,2,1,0,3,2,3,2,1,0,3,2,1,0,3,2,1,0,3,2,3}; // 0 b, 1 w<>b, 2 w, 3 w<>w, 4 C
 
 	void step() override {
 		if (module) {
 			if (module->curSampleRate == 0.f) return;
-			frac = modf(double((padX/box.size.x)*(float)(module->numOctaves*12+1)),&curKey);
+			frac = modf(double((padX/box.size.x)*(float)(module->numOctaves*(module->guideType == 1 ? 24 : 12)+1)),&curKey);
 			module->setPadInputs(padX/box.size.x, 10.0f-clamp((padY/(box.size.y-22.f))*10.1f,0.f,10.f), curKey);
         }
 	}
@@ -258,35 +266,93 @@ struct acTouchRibbon : rack::OpaqueWidget {
 			nvgScissor(args.vg, RECT_ARGS(args.clipBox));
 
 			if (module->showKeys) {
-
-				nvgStrokeColor(args.vg, nvgRGBA(0xff,0xff,0xff,0x40));
-				nvgStrokeWidth(args.vg, 2);
-				int keys = module->numOctaves*12+1;
-				float xinc = box.size.x/(float)keys;
-				for (int i=0;i<keys;i++) {
-					int keyCol = keyColors[i%12];
-					nvgBeginPath(args.vg);
-					if (keyCol == 1) {
-						// white key
-						nvgFillColor(args.vg, nvgRGBA(0xe6,0xe6,0xe6,0xa0));
-					} else if (keyCol == 2) {
-						// C key
-						nvgFillColor(args.vg, nvgRGBA(0xff,0xcc,0xaa,0xa0));
-					} else {
-						// black key
-						nvgFillColor(args.vg, nvgRGBA(0xd5,0xd5,0xd5,0x73));
-					}
-					nvgRect(args.vg, xinc*i+1.f,1.f,xinc-1.5f,box.size.y-25.f);
-					nvgFill(args.vg);
-				}
+				int keys;
+				float xinc;
+				switch(module->guideType) {
+					case 0:
+						// semitones
+						nvgStrokeColor(args.vg, nvgRGBA(0xff,0xff,0xff,0x40));
+						nvgStrokeWidth(args.vg, 2);
+						keys = module->numOctaves*12+1;
+						xinc = box.size.x/(float)keys;
+						for (int i=0;i<keys;i++) {
+							int keyCol = keyColors[i%12];
+							nvgBeginPath(args.vg);
+							if (keyCol == 1) {
+								// white key
+								nvgFillColor(args.vg, nvgRGBA(0xf6,0xf6,0xf6,0xa0));
+							} else if (keyCol == 2) {
+								// C key
+								nvgFillColor(args.vg, nvgRGBA(0xff,0xcc,0xaa,0xa0));
+							} else {
+								// black key
+								nvgFillColor(args.vg, nvgRGBA(0x40,0x40,0x40,0x73));
+							}
+							nvgRect(args.vg, xinc*i+1.f,1.f,xinc-1.5f,box.size.y-25.f);
+							nvgFill(args.vg);
+						}
 			
-				nvgStrokeColor(args.vg, nvgRGBA(0x00,0x00,0x00,0x40));
-				for (int i=1;i<keys;i++) {
-					nvgBeginPath(args.vg);
-					nvgMoveTo(args.vg, (xinc*i), box.size.y-25);
-					nvgLineTo(args.vg, (xinc*i), 0.f);
-					nvgStroke(args.vg);
-				}
+						nvgStrokeColor(args.vg, nvgRGBA(0x00,0x00,0x00,0x40));
+						for (int i=1;i<keys;i++) {
+							nvgBeginPath(args.vg);
+							nvgMoveTo(args.vg, (xinc*i), box.size.y-25);
+							nvgLineTo(args.vg, (xinc*i), 0.f);
+							nvgStroke(args.vg);
+						}
+						break;
+					case 1:
+						// quartertones
+						nvgStrokeColor(args.vg, nvgRGBA(0xff,0xff,0xff,0x40));
+						nvgStrokeWidth(args.vg, 2);
+						keys = module->numOctaves*24+1;
+						xinc = box.size.x/(float)keys;
+						for (int i=0;i<keys;i++) {
+							int keyCol = keyColorsQ[i%24];
+							nvgBeginPath(args.vg);
+							if (keyCol == 0) {
+								// black key
+								nvgFillColor(args.vg, nvgRGBA(0x40,0x40,0x40,0x73));
+							} else if (keyCol == 1) {
+								// dark gray
+								nvgFillColor(args.vg, nvgRGBA(0xd5,0xd5,0xd5,0x50));
+							} else if (keyCol == 2) {
+								// white
+								nvgFillColor(args.vg, nvgRGBA(0xf6,0xf6,0xf6,0xa0));
+							} else if (keyCol == 3) {
+								// light gray
+								nvgFillColor(args.vg, nvgRGBA(0xd5,0xd5,0xd5,0x50));
+							} else if (keyCol == 4){
+								// C key
+								nvgFillColor(args.vg, nvgRGBA(0xff,0xcc,0xaa,0xa0));
+                            }
+							nvgRect(args.vg, ((xinc*i))+1.f,1.f,(xinc)-1.5f,box.size.y-25.f);
+							nvgFill(args.vg);
+						}
+						
+						nvgStrokeColor(args.vg, nvgRGBA(0x00,0x00,0x00,0x40));
+						for (int i=1;i<keys;i++) {
+							nvgBeginPath(args.vg);
+							nvgMoveTo(args.vg, (xinc*i), box.size.y-25);
+							nvgLineTo(args.vg, (xinc*i), 0.f);
+							nvgStroke(args.vg);
+						}
+						
+						break;
+					case 2:
+						// octaves (offset to match up with actual voltages)
+						keys = module->numOctaves*12+1;
+						xinc = box.size.x/(float)keys;
+						for (int i=0;i<keys;i++) {
+							if (i%12 == 0) {
+								nvgStrokeColor(args.vg, nvgRGBA(0xff,0xff,0xff,0x40));
+								nvgBeginPath(args.vg);
+								nvgMoveTo(args.vg, (xinc*i)+(xinc/2.f), box.size.y-25);
+								nvgLineTo(args.vg, (xinc*i)+(xinc/2.f), 0.f);
+								nvgStroke(args.vg);
+                            }
+						}
+						break;
+                }
 			}			
 
 			if (isDragging) {
@@ -405,8 +471,11 @@ struct CRBViWidget : ModuleWidget {
 		setModule(module);
 
 		setPanel(createPanel(asset::plugin(pluginInstance, "res/CRBVi-White.svg"), asset::plugin(pluginInstance, "res/CRBVi-Dark.svg")));
-		addChild(createWidget<ThemedScrew>(Vec(2, 0)));
-		addChild(createWidget<ThemedScrew>(Vec(box.size.x / 2 - 8, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+
+		addChild(createWidget<ThemedScrew>(Vec(RACK_GRID_WIDTH, 0)));
+		addChild(createWidget<ThemedScrew>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
+		addChild(createWidget<ThemedScrew>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+		addChild(createWidget<ThemedScrew>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(111.373, 105.013)), module, CRBVi::OUTPUT_X));
 		addOutput(createOutputCentered<ThemedPJ301MPort>(mm2px(Vec(126.190, 105.013)), module, CRBVi::OUTPUT_Y));
@@ -433,7 +502,11 @@ struct CRBViWidget : ModuleWidget {
 		CRBVi* module = getModule<CRBVi>();
 		menu->addChild(new MenuSeparator);
 		menu->addChild(createMenuLabel("CRBVi Options"));
-		menu->addChild(createBoolPtrMenuItem("Show Keys in Pad", "", &module->showKeys));
+		menu->addChild(createBoolPtrMenuItem("Show Guides", "", &module->showKeys));
+		menu->addChild(createIndexPtrSubmenuItem("Guide Type...",
+			{"Semitones", "Quartertones", "Octaves"},
+			&module->guideType
+		));
 		menu->addChild(createIndexPtrSubmenuItem("Y-Axis Range (Non-VCA)",
 			{"0V to 10V (Default)", "0V to 5V", "-5V to 5V"},
 			&module->yAxisRangeMode
