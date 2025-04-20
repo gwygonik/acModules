@@ -7,7 +7,7 @@ on:
       - 'res/**'
 
 env:
-  rack-sdk-version: latest
+  rack-sdk-version: 2.6.3
   rack-plugin-toolchain-dir: /home/build/rack-plugin-toolchain
 
 defaults:
@@ -39,7 +39,7 @@ jobs:
     needs: modify-plugin-version
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/qno/rack-plugin-toolchain-win-linux
+      image: ghcr.io/bloodbat/rack-plugin-toolchain-win-linux
       options: --user root
     strategy:
       matrix:
@@ -84,7 +84,7 @@ jobs:
       - name: Get Rack-SDK
         run: |
           pushd $HOME
-          wget -O Rack-SDK.zip https://vcvrack.com/downloads/Rack-SDK-${{ env.rack-sdk-version }}-mac-x64+arm64.zip
+          wget -O Rack-SDK.zip https://vcvrack.com/downloads/Rack-SDK-${{ env.rack-sdk-version }}-mac-${{ matrix.platform }}.zip
           unzip Rack-SDK.zip
       - name: Build plugin
         run: |
